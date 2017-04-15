@@ -1,0 +1,11 @@
+{
+    "variants":
+    {
+        "normal": { "model": "icb:conveyor" },
+
+        "facing=north": { "model": "icb:conveyor", "y": 0 },
+        "facing=east": { "model": "icb:conveyor", "y": 90 },
+        "facing=south": { "model": "icb:conveyor", "y": 180 },
+        "facing=west": { "model": "icb:conveyor", "y": 270 }
+    }
+}
