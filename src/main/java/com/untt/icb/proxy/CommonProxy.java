@@ -1,6 +1,7 @@
 package com.untt.icb.proxy;
 
 import com.untt.icb.init.ICBBlocks;
+import com.untt.icb.init.ICBTileEntities;
 import com.untt.icb.utility.LogHelper;
 
 public class CommonProxy implements IProxy
@@ -16,6 +17,8 @@ public class CommonProxy implements IProxy
     @Override
     public void init()
     {
+        ICBTileEntities.init();
+
         LogHelper.info("CommonProxy: Initialization Complete!");
     }
 
