@@ -1,0 +1,26 @@
+[{
+  "modid": "icb",
+  "name": "Immersive-Conveyor-Belts",
+  "description": "Adds Conveyors to Minecraft",
+  "version": "0.1",
+  "mcversion": "1.11.2",
+  "url": "",
+  "updateUrl": "",
+  "authorList": 
+  [
+    "officialy",
+    "thermite",
+    "techmage"
+  ],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": 
+  [
+
+  ],
+  "parent":"",
+  "dependencies": 
+  [
+
+  ]
+}]
