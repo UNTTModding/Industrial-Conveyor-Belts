@@ -1,16 +1,16 @@
 package com.untt.icb.block;
 
-import com.untt.icb.tileentity.TileEntityConveyor;
-import com.untt.icb.tileentity.TileEntityICB;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -22,112 +22,126 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public class BlockConveyor extends BlockICB implements ITileEntityProvider
+public class BlockConveyor extends BlockICB
 {
     private static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    private static final PropertyBool UP = PropertyBool.create("up");
-    private static final PropertyBool DOWN = PropertyBool.create("down");
+    private static final PropertyBool SLOPE_UP = PropertyBool.create("slope_up");
+    private static final PropertyBool SLOPE_DOWN = PropertyBool.create("slope_down");
 
-    private static final AxisAlignedBB BOUNDS = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.16F, 1.0F);
+    private static final AxisAlignedBB BOUNDS_FLAT = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.16F, 1.0F);
+    private static final AxisAlignedBB BOUNDS_SLOPED = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.1F, 1.0F);
+
+    private static final double transportation_speed = 0.1D;
 
     public BlockConveyor(String name)
     {
-        super(Material.CORAL, name);
+        super(Material.CLOTH, name);
 
         this.setHardness(0.5F);
         this.useNeighborBrightness = true;
 
-        this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(UP, false).withProperty(DOWN, false));
-    }
-
-    @Nullable
-    @Override
-    public TileEntity createNewTileEntity(World worldIn, int meta)
-    {
-        return new TileEntityConveyor();
+        this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(SLOPE_UP, false).withProperty(SLOPE_DOWN, false));
     }
 
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
     {
-        return BOUNDS;
+        if (state.getValue(SLOPE_UP) || state.getValue(SLOPE_DOWN))
+            return BOUNDS_SLOPED;
+
+        return BOUNDS_FLAT;
     }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
+        // Get rotation
         EnumFacing facing = placer.getHorizontalFacing();
 
-        boolean up = false;
-        boolean down = false;
+        // Create default values
+        boolean slopeUp = false;
+        boolean slopeDown = false;
 
-        IBlockState state_front_up = worldIn.getBlockState(pos.offset(facing).up());
-        IBlockState state_back_up = worldIn.getBlockState(pos.offset(facing.getOpposite()).up());
+        // Check if conveyor is a slope
+        IBlockState stateFrontUp = worldIn.getBlockState(pos.offset(facing).up());
+        IBlockState stateBackUp = worldIn.getBlockState(pos.offset(facing.getOpposite()).up());
 
-        if (state_front_up.getBlock() == this && state_front_up.getValue(FACING) == facing)
-            up = true;
+        if (stateFrontUp.getBlock() == this && stateFrontUp.getValue(FACING) == facing)
+            slopeUp = true;
 
-        if (state_back_up.getBlock() == this && state_back_up.getValue(FACING) == facing)
-            down = true;
+        if (stateBackUp.getBlock() == this && stateBackUp.getValue(FACING) == facing)
+            slopeDown = true;
 
-        worldIn.setBlockState(pos, state.withProperty(FACING, facing).withProperty(UP, up).withProperty(DOWN, down));
+        // Update relevant conveyors
+        BlockPos posFrontDown = pos.offset(facing).down();
+        BlockPos posBackDown = pos.offset(facing.getOpposite()).down();
 
-        BlockPos pos_front_down = pos.offset(facing).down();
-        BlockPos pos_back_down = pos.offset(facing.getOpposite()).down();
+        IBlockState stateFrontDown = worldIn.getBlockState(posFrontDown);
+        IBlockState stateBackDown = worldIn.getBlockState(posBackDown);
 
-        IBlockState state_front_down = worldIn.getBlockState(pos_front_down);
-        IBlockState state_back_down = worldIn.getBlockState(pos_back_down);
+        if (stateFrontDown.getBlock() == this)
+            updateConveyor(worldIn, posFrontDown, stateFrontDown, pos, state.withProperty(FACING, facing).withProperty(SLOPE_UP, slopeUp).withProperty(SLOPE_DOWN, slopeDown));
 
-        if (state_front_down.getBlock() == this)
-            updateFacing(worldIn, pos_front_down, state_front_down, pos, state.withProperty(FACING, facing).withProperty(UP, up).withProperty(DOWN, down));
+        if (stateBackDown.getBlock() == this)
+            updateConveyor(worldIn, posBackDown, stateBackDown, pos, state.withProperty(FACING, facing).withProperty(SLOPE_UP, slopeUp).withProperty(SLOPE_DOWN, slopeDown));
 
-        if (state_back_down.getBlock() == this)
-            updateFacing(worldIn, pos_back_down, state_back_down, pos, state.withProperty(FACING, facing).withProperty(UP, up).withProperty(DOWN, down));
-
-        if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityICB)
-        {
-            TileEntityConveyor tileConveyor = (TileEntityConveyor) worldIn.getTileEntity(pos);
-
-            if (tileConveyor != null)
-            {
-                tileConveyor.setSlopeUp(up);
-                tileConveyor.setSlopeDown(down);
-            }
-        }
+        // Set BlockState
+        worldIn.setBlockState(pos, state.withProperty(FACING, facing).withProperty(SLOPE_UP, slopeUp).withProperty(SLOPE_DOWN, slopeDown));
 
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
     }
 
-    private void updateFacing(World worldIn, BlockPos pos, IBlockState state, BlockPos posFrom, IBlockState stateFrom)
+    private void updateConveyor(World worldIn, BlockPos pos, IBlockState state, BlockPos posFrom, IBlockState stateFrom)
     {
+        // Get current state
         EnumFacing facing = state.getValue(FACING);
 
-        boolean up = state.getValue(UP);
-        boolean down = state.getValue(DOWN);
+        boolean up = state.getValue(SLOPE_UP);
+        boolean down = state.getValue(SLOPE_DOWN);
 
+        // Facing same direction
         if (stateFrom.getValue(FACING) == facing)
         {
+            // Slope - Down
             if (posFrom.equals(pos.offset(facing.getOpposite()).up()))
                 down = true;
 
+            // Slope - Up
             if(posFrom.equals(pos.offset(facing).up()))
                 up = true;
         }
 
-        if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityICB)
+        // Update BlockState
+        worldIn.setBlockState(pos, state.withProperty(FACING, facing).withProperty(SLOPE_UP, up).withProperty(SLOPE_DOWN, down));
+    }
+
+    @Override
+    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+    {
+        if (!worldIn.isRemote)
+            moveEntity(entityIn, state.getValue(FACING), state.getValue(SLOPE_UP), state.getValue(SLOPE_DOWN), pos);
+    }
+
+    private void moveEntity(Entity entity, EnumFacing facing, boolean slopeUp, boolean slopeDown, BlockPos pos)
+    {
+        if (entity.canBePushed() || entity instanceof EntityItem || entity instanceof EntityLiving || entity instanceof EntityXPOrb)
         {
-            TileEntityConveyor tileConveyor = (TileEntityConveyor) worldIn.getTileEntity(pos);
+            entity.isAirBorne = true;
 
-            if (tileConveyor != null)
+            entity.motionX += transportation_speed * facing.getFrontOffsetX();
+            entity.motionZ += transportation_speed * facing.getFrontOffsetZ();
+
+            if (slopeUp)
             {
-                tileConveyor.setSlopeUp(up);
-                tileConveyor.setSlopeDown(down);
-            }
-        }
+                entity.onGround = false;
 
-        worldIn.setBlockState(pos, state.withProperty(FACING, facing).withProperty(UP, up).withProperty(DOWN, down));
+                entity.motionY = transportation_speed;
+            }
+
+            if (entity instanceof EntityItem)
+                ((EntityItem) entity).setAgeToCreativeDespawnTime();
+        }
     }
 
     @Override
@@ -135,7 +149,7 @@ public class BlockConveyor extends BlockICB implements ITileEntityProvider
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta)
     {
-        return getDefaultState().withProperty(FACING, EnumFacing.getFront((meta & 3) + 2)).withProperty(UP, (meta & 4) > 0).withProperty(DOWN, (meta & 8) > 0);
+        return getDefaultState().withProperty(FACING, EnumFacing.getFront((meta & 3) + 2)).withProperty(SLOPE_UP, (meta & 4) > 0).withProperty(SLOPE_DOWN, (meta & 8) > 0);
     }
 
     @Override
@@ -143,10 +157,10 @@ public class BlockConveyor extends BlockICB implements ITileEntityProvider
     {
         int meta = (state.getValue(FACING)).getIndex() - 2;
 
-        if (state.getValue(UP))
+        if (state.getValue(SLOPE_UP))
             meta |= 4;
 
-        if (state.getValue(DOWN))
+        if (state.getValue(SLOPE_DOWN))
             meta |= 8;
 
         return meta;
@@ -156,7 +170,7 @@ public class BlockConveyor extends BlockICB implements ITileEntityProvider
     @Nonnull
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING, UP, DOWN);
+        return new BlockStateContainer(this, FACING, SLOPE_UP, SLOPE_DOWN);
     }
 
     @Override
