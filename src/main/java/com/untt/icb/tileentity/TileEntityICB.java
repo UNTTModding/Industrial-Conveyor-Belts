@@ -40,6 +40,7 @@ public class TileEntityICB extends TileEntity
     }
 
     @Override
+    @Nonnull
     public NBTTagCompound writeToNBT(NBTTagCompound compound)
     {
         super.writeToNBT(compound);
@@ -69,6 +70,7 @@ public class TileEntityICB extends TileEntity
     }
 
     @Override
+    @Nonnull
     public NBTTagCompound getUpdateTag()
     {
         return writeToNBT(new NBTTagCompound());

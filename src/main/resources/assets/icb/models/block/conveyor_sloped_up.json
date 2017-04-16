@@ -1,0 +1,57 @@
+{
+	"textures": {
+		"particle": "icb:blocks/conveyor",
+		"texture": "icb:blocks/conveyor"
+	},
+	"elements": [
+		{
+			"__comment": "Cube1",
+			"from": [ 14.5, -0.25, 0.5 ],
+			"to": [ 16, 2.25, 23.25 ],
+			"rotation": { "origin": [ 14.5, -0.25, 0.5 ], "axis": "x", "angle": -45 },
+			"faces": {
+				"down": { "uv": [ 7.25, 0, 8, 8 ], "texture": "#texture" },
+				"up": { "uv": [ 7.25, 0, 8, 8 ], "texture": "#texture" },
+				"north": { "uv": [ 2, 9.25, 1.25, 8 ], "texture": "#texture", "rotation": 180 },
+				"south": { "uv": [ 1.25, 9.25, 2, 8 ], "texture": "#texture", "rotation": 180 },
+				"west": { "uv": [ 0, 16, 1.25, 8 ], "texture": "#texture", "rotation": 90 },
+				"east": { "uv": [ 0, 16, 1.25, 8 ], "texture": "#texture", "rotation": 90 }
+			}
+		},
+		{
+			"__comment": "Cube1",
+			"from": [ 0, -0.375, 0.5 ],
+			"to": [ 1.5, 2.125, 23.25 ],
+			"rotation": { "origin": [ 14.5, -0.375, 0.5 ], "axis": "x", "angle": -45 },
+			"faces": {
+				"down": { "uv": [ 0, 0, 0.75, 8 ], "texture": "#texture" },
+				"up": { "uv": [ 0, 0, 0.75, 8 ], "texture": "#texture" },
+				"north": { "uv": [ 1.25, 9.25, 2, 8 ], "texture": "#texture", "rotation": 180 },
+				"south": { "uv": [ 2, 9.25, 1.25, 8 ], "texture": "#texture", "rotation": 180 },
+				"west": { "uv": [ 0, 16, 1.25, 8 ], "texture": "#texture", "rotation": 90 },
+				"east": { "uv": [ 0, 16, 1.25, 8 ], "texture": "#texture", "rotation": 90 }
+			}
+		},
+		{
+			"__comment": "Cube3",
+			"from": [ 1.5, -0.125, 0.375 ],
+			"to": [ 14.5, 1.375, 23.625 ],
+			"rotation": { "origin": [ 14.5, -0.125, 0.375 ], "axis": "x", "angle": -45 },
+			"faces": {
+				"down": { "uv": [ 8.75, 0, 15.25, 8 ], "texture": "#texture" },
+				"up": { "uv": [ 0.75, 0, 7.25, 8 ], "texture": "#texture", "rotation": 180 },
+				"north": { "uv": [ 8.75, 8, 15.25, 8.75 ], "texture": "#texture" },
+				"south": { "uv": [ 8.75, 8.75, 15.25, 9.5 ], "texture": "#texture" },
+				"west": { "uv": [ 0, 14.5, 16, 16 ], "texture": "#texture" },
+				"east": { "uv": [ 0, 14.5, 16, 16 ], "texture": "#texture" }
+			}
+		}
+	],
+	"display": {
+		"gui": {
+			"rotation":  [ 30, 225, 0 ],
+			"translation":  [ 0, 2.7826, 0 ],
+			"scale":  [ 0.625, 0.625, 0.625 ]
+		}
+	}
+}
