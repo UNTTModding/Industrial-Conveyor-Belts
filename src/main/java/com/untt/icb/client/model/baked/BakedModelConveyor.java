@@ -1,7 +1,6 @@
 package com.untt.icb.client.model.baked;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.untt.icb.block.BlockConveyor;
 import com.untt.icb.utility.LogHelper;
@@ -21,7 +20,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.IPerspectiveAwareModel;
-import net.minecraftforge.client.model.IRetexturableModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -35,11 +33,11 @@ import java.util.function.Function;
 
 public class BakedModelConveyor implements IPerspectiveAwareModel
 {
-    private static IRetexturableModel modelConveyorFlat;
-    private static IRetexturableModel modelConveyorSlopedUp;
-    private static IRetexturableModel modelConveyorSlopedDown;
-
-    private static final String textureConveyor = "icb:blocks/conveyor";
+    private static IModel modelConveyorFlat;
+    private static IModel modelConveyorSlopedUp;
+    private static IModel modelConveyorSlopedDown;
+    private static IModel modelConveyorTurnLeft;
+    private static IModel modelConveyorTurnRight;
 
     private IPerspectiveAwareModel modelDefault;
 
@@ -51,9 +49,11 @@ public class BakedModelConveyor implements IPerspectiveAwareModel
     {
         try
         {
-            modelConveyorFlat = (IRetexturableModel) ModelLoaderRegistry.getModel(ResourceHelper.getResource("block/conveyor"));
-            modelConveyorSlopedUp = (IRetexturableModel) ModelLoaderRegistry.getModel(ResourceHelper.getResource("block/conveyor_sloped_up"));
-            modelConveyorSlopedDown = (IRetexturableModel) ModelLoaderRegistry.getModel(ResourceHelper.getResource("block/conveyor_sloped_down"));
+            modelConveyorFlat = ModelLoaderRegistry.getModel(ResourceHelper.getResource("block/conveyor"));
+            modelConveyorSlopedUp = ModelLoaderRegistry.getModel(ResourceHelper.getResource("block/conveyor_sloped_up"));
+            modelConveyorSlopedDown = ModelLoaderRegistry.getModel(ResourceHelper.getResource("block/conveyor_sloped_down"));
+            modelConveyorTurnLeft = ModelLoaderRegistry.getModel(ResourceHelper.getResource("block/conveyor_turn"));
+            modelConveyorTurnRight = ModelLoaderRegistry.getModel(ResourceHelper.getResource("block/conveyor_turn_reverse"));
         }
 
         catch (Exception e)
@@ -79,9 +79,7 @@ public class BakedModelConveyor implements IPerspectiveAwareModel
 
         else
         {
-            ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-
-            IRetexturableModel modelConveyor = modelConveyorFlat;
+            IModel modelConveyor = modelConveyorFlat;
 
             if (state.get(0))
                 modelConveyor = modelConveyorSlopedUp;
@@ -89,10 +87,13 @@ public class BakedModelConveyor implements IPerspectiveAwareModel
             if (state.get(1))
                 modelConveyor = modelConveyorSlopedDown;
 
-            builder.put("conveyor", textureConveyor);
-            IModel modelState = modelConveyor.retexture(builder.build());
+            if (state.get(2))
+                modelConveyor = modelConveyorTurnLeft;
 
-            bakedModel = modelState.bake(new TRSRTransformation(facing), format, textureGetter::apply);
+            if (state.get(3))
+                modelConveyor = modelConveyorTurnRight;
+
+            bakedModel = modelConveyor.bake(new TRSRTransformation(facing), format, textureGetter::apply);
 
             cache.put(cacheKey, bakedModel);
         }
@@ -104,7 +105,7 @@ public class BakedModelConveyor implements IPerspectiveAwareModel
     @Nonnull
     public List<BakedQuad> getQuads(@Nullable IBlockState blockState, @Nullable EnumFacing side, long rand)
     {
-        ArrayList<Boolean> state = new ArrayList<>(Arrays.asList(false, false));
+        ArrayList<Boolean> state = new ArrayList<>(Arrays.asList(false, false, false, false));
         EnumFacing facing = EnumFacing.NORTH;
 
         if (blockState instanceof IExtendedBlockState)
@@ -119,6 +120,12 @@ public class BakedModelConveyor implements IPerspectiveAwareModel
 
             if (extendedBlockState.getUnlistedNames().contains(BlockConveyor.SLOPE_DOWN))
                 state.set(1, extendedBlockState.getValue(BlockConveyor.SLOPE_DOWN));
+
+            if (extendedBlockState.getUnlistedNames().contains(BlockConveyor.TURN_LEFT))
+                state.set(2, extendedBlockState.getValue(BlockConveyor.TURN_LEFT));
+
+            if (extendedBlockState.getUnlistedNames().contains(BlockConveyor.TURN_RIGHT))
+                state.set(3, extendedBlockState.getValue(BlockConveyor.TURN_RIGHT));
         }
 
         return getActualModel(state, facing).getQuads(blockState, side, rand);

@@ -1,6 +1,7 @@
 {
 	"textures": {
-		"particle": "icb:blocks/conveyor"
+		"particle": "icb:blocks/conveyor",
+		"conveyor": "icb:blocks/conveyor"
 	},
 	"elements": [
 		{

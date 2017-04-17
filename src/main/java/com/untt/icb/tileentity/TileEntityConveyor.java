@@ -5,17 +5,14 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-public class TileEntityConveyor extends TileEntityICB
+public class TileEntityConveyor extends TileEntityConveyorBase
 {
-    private static final String TAG_FACING = "facing";
     private static final String TAG_SLOPE_UP = "slope_up";
     private static final String TAG_SLOPE_DOWN = "slope_down";
+    private static final String TAG_TURN_LEFT = "turn_left";
+    private static final String TAG_TURN_RIGHT = "turn_right";
 
     public TileEntityConveyor()
     {
@@ -24,60 +21,39 @@ public class TileEntityConveyor extends TileEntityICB
 
     public IExtendedBlockState writeExtendedBlockState(IExtendedBlockState state)
     {
-        EnumFacing facing = getFacing();
+        state = super.writeExtendedBlockState(state);
+
         boolean slopeUp = isSlopeUp();
         boolean slopeDown = isSlopeDown();
+        boolean turn_left = isTurnLeft();
+        boolean turn_right = isTurnRight();
 
-        state = state.withProperty(BlockConveyor.FACING, facing);
         state = state.withProperty(BlockConveyor.SLOPE_UP, slopeUp);
         state = state.withProperty(BlockConveyor.SLOPE_DOWN, slopeDown);
+        state = state.withProperty(BlockConveyor.TURN_LEFT, turn_left);
+        state = state.withProperty(BlockConveyor.TURN_RIGHT, turn_right);
 
         return state;
     }
 
     @Override
-    @Nullable
-    public SPacketUpdateTileEntity getUpdatePacket()
-    {
-        NBTTagCompound tag = getTileData().copy();
-
-        writeToNBT(tag);
-
-        return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tag);
-    }
-
-    @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt)
     {
+        super.onDataPacket(net, pkt);
+
         NBTTagCompound tag = pkt.getNbtCompound();
 
-        NBTBase facing = tag.getTag(TAG_FACING);
         NBTBase slopeUp = tag.getTag(TAG_SLOPE_UP);
         NBTBase slopeDown = tag.getTag(TAG_SLOPE_DOWN);
+        NBTBase turnLeft = tag.getTag(TAG_TURN_LEFT);
+        NBTBase turnRight = tag.getTag(TAG_TURN_RIGHT);
 
-        getTileData().setTag(TAG_FACING, facing);
         getTileData().setTag(TAG_SLOPE_UP, slopeUp);
         getTileData().setTag(TAG_SLOPE_DOWN, slopeDown);
+        getTileData().setTag(TAG_TURN_LEFT, turnLeft);
+        getTileData().setTag(TAG_TURN_RIGHT, turnRight);
 
         readFromNBT(tag);
-    }
-
-    @Override
-    @Nonnull
-    public NBTTagCompound getUpdateTag()
-    {
-        return writeToNBT(new NBTTagCompound());
-    }
-
-    @Override
-    public void handleUpdateTag(@Nullable NBTTagCompound tag)
-    {
-        readFromNBT(tag);
-    }
-
-    public EnumFacing getFacing()
-    {
-        return EnumFacing.getFront(getTileData().getInteger(TAG_FACING));
     }
 
     public boolean isSlopeUp()
@@ -90,9 +66,14 @@ public class TileEntityConveyor extends TileEntityICB
         return getTileData().getBoolean(TAG_SLOPE_DOWN);
     }
 
-    public void setFacing(EnumFacing facing)
+    public boolean isTurnLeft()
     {
-        getTileData().setInteger(TAG_FACING, facing.getIndex());
+        return getTileData().getBoolean(TAG_TURN_LEFT);
+    }
+
+    public boolean isTurnRight()
+    {
+        return getTileData().getBoolean(TAG_TURN_RIGHT);
     }
 
     public void setSlopeUP(boolean slopeUP)
@@ -103,5 +84,15 @@ public class TileEntityConveyor extends TileEntityICB
     public void setSlopeDown(boolean slopeDown)
     {
         getTileData().setBoolean(TAG_SLOPE_DOWN, slopeDown);
+    }
+
+    public void setTurnLeft(boolean turnLeft)
+    {
+        getTileData().setBoolean(TAG_TURN_LEFT, turnLeft);
+    }
+
+    public void setTagTurnRight(boolean turnRight)
+    {
+        getTileData().setBoolean(TAG_TURN_RIGHT, turnRight);
     }
 }

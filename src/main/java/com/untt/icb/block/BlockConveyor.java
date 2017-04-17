@@ -1,10 +1,9 @@
 package com.untt.icb.block;
 
 import com.untt.icb.block.unlistedproperties.UnlistedPropertyBoolean;
-import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
 import com.untt.icb.tileentity.TileEntityConveyor;
+import com.untt.icb.tileentity.TileEntityConveyorBase;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -15,39 +14,30 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockConveyor extends BlockICB implements ITileEntityProvider
+public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvider
 {
-    public static final UnlistedPropertyFacing FACING = new UnlistedPropertyFacing("facing");
     public static final UnlistedPropertyBoolean SLOPE_UP = new UnlistedPropertyBoolean("slope_up");
     public static final UnlistedPropertyBoolean SLOPE_DOWN = new UnlistedPropertyBoolean("slope_down");
+    public static final UnlistedPropertyBoolean TURN_LEFT = new UnlistedPropertyBoolean("turn_left");
+    public static final UnlistedPropertyBoolean TURN_RIGHT = new UnlistedPropertyBoolean("turn_right");
 
     private static final AxisAlignedBB BOUNDS_FLAT = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.16F, 1.0F);
     private static final AxisAlignedBB BOUNDS_SLOPED = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.1F, 1.0F);
 
-    private static final double transportation_speed = 0.05D;
-
     public BlockConveyor(String name)
     {
-        super(Material.CLOTH, name);
-
-        this.setHardness(0.5F);
-        this.useNeighborBrightness = true;
+        super(name);
     }
 
     @Override
@@ -89,6 +79,8 @@ public class BlockConveyor extends BlockICB implements ITileEntityProvider
         // Create default values
         boolean slopeUp = false;
         boolean slopeDown = false;
+        boolean turnLeft = false;
+        boolean turnRight = false;
 
         if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityConveyor)
         {
@@ -100,25 +92,22 @@ public class BlockConveyor extends BlockICB implements ITileEntityProvider
             BlockPos posFrontUp = pos.offset(facing).up();
             BlockPos posBackUp = pos.offset(facing.getOpposite()).up();
 
-            TileEntityConveyor conveyorFrontUp = null;
-            TileEntityConveyor conveyorBackUp = null;
-
             if (worldIn.getTileEntity(posFrontUp) != null && worldIn.getTileEntity(posFrontUp) instanceof TileEntityConveyor)
-                conveyorFrontUp = (TileEntityConveyor) worldIn.getTileEntity(posFrontUp);
+                slopeUp = ((TileEntityConveyor) worldIn.getTileEntity(posFrontUp)).getFacing() == facing;
 
             if (worldIn.getTileEntity(posBackUp) != null && worldIn.getTileEntity(posBackUp) instanceof TileEntityConveyor)
-                conveyorBackUp = (TileEntityConveyor) worldIn.getTileEntity(posBackUp);
+                slopeDown = ((TileEntityConveyor) worldIn.getTileEntity(posBackUp)).getFacing() == facing;
 
-            if (conveyorFrontUp != null && conveyorFrontUp.getFacing() == facing)
-                slopeUp = true;
+            // Check if conveyor is a turn
+            BlockPos posLeft = pos.offset(facing.rotateYCCW());
+            BlockPos posRight = pos.offset(facing.rotateY());
 
-            if (conveyorBackUp != null && conveyorBackUp.getFacing() == facing)
-                slopeDown = true;
+            if (worldIn.getTileEntity(posLeft) != null && worldIn.getTileEntity(posLeft) instanceof TileEntityConveyor)
+                turnLeft = ((TileEntityConveyor) worldIn.getTileEntity(posLeft)).getFacing() == facing.rotateY();
 
-            // Set state
-            tileConveyor.setFacing(facing);
-            tileConveyor.setSlopeUP(slopeUp);
-            tileConveyor.setSlopeDown(slopeDown);
+            if (worldIn.getTileEntity(posRight) != null && worldIn.getTileEntity(posRight) instanceof TileEntityConveyor)
+                turnRight = ((TileEntityConveyor) worldIn.getTileEntity(posRight)).getFacing() == facing.rotateYCCW();
+
 
             // Update relevant conveyors
             BlockPos posFrontDown = pos.offset(facing).down();
@@ -138,44 +127,34 @@ public class BlockConveyor extends BlockICB implements ITileEntityProvider
 
             if (conveyorBackDown != null && conveyorBackDown.getFacing() == facing)
                 conveyorBackDown.setSlopeUP(true);
+
+            // Set state
+            tileConveyor.setFacing(facing);
+            tileConveyor.setSlopeUP(slopeUp);
+            tileConveyor.setSlopeDown(slopeDown);
+            tileConveyor.setTurnLeft(turnLeft);
+            tileConveyor.setTagTurnRight(turnRight);
         }
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
+    protected void moveEntity(Entity entity, TileEntityConveyorBase tileConveyorBase)
     {
-        if (!worldIn.isRemote)
-        {
-            if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityConveyor)
-                moveEntity(entityIn, (TileEntityConveyor) worldIn.getTileEntity(pos));
-        }
-    }
+        super.moveEntity(entity, tileConveyorBase);
 
-    private void moveEntity(Entity entity, TileEntityConveyor tileConveyor)
-    {
         if (entity.canBePushed() || entity instanceof EntityItem || entity instanceof EntityLiving || entity instanceof EntityXPOrb)
         {
-            EnumFacing facing = tileConveyor.getFacing();
-            boolean slopeUp = tileConveyor.isSlopeUp();
-            boolean slopeDown = tileConveyor.isSlopeDown();
-
-            entity.isAirBorne = true;
-
-            double movementX = transportation_speed * facing.getFrontOffsetX();
-            double movementZ = transportation_speed * facing.getFrontOffsetZ();
-            double movementY = 0.0D;
-
-            if (slopeUp || slopeDown)
+            if (tileConveyorBase instanceof TileEntityConveyor)
             {
-                entity.onGround = false;
+                TileEntityConveyor tileConveyor = (TileEntityConveyor) tileConveyorBase;
 
-                movementY = transportation_speed * facing.getFrontOffsetY();
+                if (tileConveyor.isSlopeUp())
+                {
+                    entity.onGround = false;
+
+                    entity.setPosition(entity.posX, entity.posY + transportation_speed, entity.posZ);
+                }
             }
-
-            entity.setPosition(entity.posX + movementX, entity.posY + movementY, entity.posZ + movementZ);
-
-            if (entity instanceof EntityItem)
-                ((EntityItem) entity).setAgeToCreativeDespawnTime();
         }
     }
 
@@ -184,65 +163,8 @@ public class BlockConveyor extends BlockICB implements ITileEntityProvider
     protected BlockStateContainer createBlockState()
     {
         IProperty[] listedProperties = new IProperty[] {  };
-        IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { FACING, SLOPE_UP, SLOPE_DOWN };
+        IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { FACING, SLOPE_UP, SLOPE_DOWN, TURN_LEFT, TURN_RIGHT };
 
         return new ExtendedBlockState(this, listedProperties, unlistedProperties);
-    }
-
-    @Override
-    @Nonnull
-    public IBlockState getExtendedState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos)
-    {
-        IExtendedBlockState extendedState = (IExtendedBlockState) state;
-
-        TileEntity tile = world.getTileEntity(pos);
-
-        if (tile != null && tile instanceof TileEntityConveyor)
-        {
-            TileEntityConveyor tileConveyor = (TileEntityConveyor) tile;
-
-            return tileConveyor.writeExtendedBlockState(extendedState);
-        }
-
-        return super.getExtendedState(state, world, pos);
-    }
-
-    @Override
-    @Nonnull
-    @SuppressWarnings("deprecation")
-    public EnumBlockRenderType getRenderType(IBlockState state)
-    {
-        return EnumBlockRenderType.MODEL;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    public boolean isFullCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    @SideOnly(Side.CLIENT)
-    public boolean isOpaqueCube(IBlockState state)
-    {
-        return false;
-    }
-
-    @Override
-    @SuppressWarnings("deprecation")
-    @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, EnumFacing side)
-    {
-        return true;
-    }
-
-    @Override
-    @Nonnull
-    @SideOnly(Side.CLIENT)
-    public BlockRenderLayer getBlockLayer()
-    {
-        return BlockRenderLayer.CUTOUT_MIPPED;
     }
 }
