@@ -35,6 +35,9 @@ public class ImmersiveConveyorBelts
         commonProxy.init();
         sidedProxy.init();
 
+        commonProxy.registerEventHandler();
+        sidedProxy.registerEventHandler();
+
         LogHelper.info("Initialization Complete!");
     }
 

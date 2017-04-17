@@ -1,21 +1,6 @@
 {
     "variants":
     {
-        "normal": { "model": "icb:conveyor" },
-
-        "facing=north,slope_down=false,slope_up=false": { "model": "icb:conveyor", "y": 0 },
-        "facing=east,slope_down=false,slope_up=false": { "model": "icb:conveyor", "y": 90 },
-        "facing=south,slope_down=false,slope_up=false": { "model": "icb:conveyor", "y": 180 },
-        "facing=west,slope_down=false,slope_up=false": { "model": "icb:conveyor", "y": 270 },
-
-        "facing=north,slope_down=false,slope_up=true": { "model": "icb:conveyor_sloped_up", "y": 180 },
-        "facing=east,slope_down=false,slope_up=true": { "model": "icb:conveyor_sloped_up", "y": 270 },
-        "facing=south,slope_down=false,slope_up=true": { "model": "icb:conveyor_sloped_up", "y": 0 },
-        "facing=west,slope_down=false,slope_up=true": { "model": "icb:conveyor_sloped_up", "y": 90 },
-
-        "facing=north,slope_down=true,slope_up=false": { "model": "icb:conveyor_sloped_down", "y": 0 },
-        "facing=east,slope_down=true,slope_up=false": { "model": "icb:conveyor_sloped_down", "y": 90 },
-        "facing=south,slope_down=true,slope_up=false": { "model": "icb:conveyor_sloped_down", "y": 180 },
-        "facing=west,slope_down=true,slope_up=false": { "model": "icb:conveyor_sloped_down", "y": 270 }
+        "normal": { "model": "icb:conveyor" }
     }
 }

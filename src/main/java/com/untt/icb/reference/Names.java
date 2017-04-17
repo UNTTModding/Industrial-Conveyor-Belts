@@ -11,4 +11,9 @@ public class Names
     {
         public static final String CONVEYOR = "conveyor";
     }
+
+    public static final class TileEntities
+    {
+        public static final String CONVEYOR = "conveyor";
+    }
 }

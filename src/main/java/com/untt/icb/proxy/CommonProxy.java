@@ -27,4 +27,10 @@ public class CommonProxy implements IProxy
     {
         LogHelper.info("CommonProxy: Post Initialization Complete!");
     }
+
+    @Override
+    public void registerEventHandler()
+    {
+
+    }
 }
