@@ -3,6 +3,7 @@ package com.untt.icb.block;
 import com.untt.icb.block.unlistedproperties.UnlistedPropertyBoolean;
 import com.untt.icb.tileentity.TileEntityConveyor;
 import com.untt.icb.tileentity.TileEntityConveyorBase;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -137,6 +138,27 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
         }
     }
 
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+    {
+        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+
+        if (!worldIn.isRemote)
+        {
+            TileEntityConveyor tileConveyor = getTileEntity(worldIn, pos);
+
+            if (tileConveyor != null && !worldIn.getBlockState(fromPos).isFullyOpaque())
+            {
+                if (tileConveyor.isSlopeUp() && fromPos.equals(pos.offset(tileConveyor.getFacing())))
+                    tileConveyor.setSlopeUP(false);
+
+                if (tileConveyor.isSlopeDown() && fromPos.equals(pos.offset(tileConveyor.getFacing().getOpposite())))
+                    tileConveyor.setSlopeDown(false);
+
+                worldIn.markChunkDirty(pos, tileConveyor);
+            }
+        }
+    }
+
     @Override
     protected void moveEntity(Entity entity, TileEntityConveyorBase tileConveyorBase)
     {
@@ -166,5 +188,13 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
         IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { FACING, SLOPE_UP, SLOPE_DOWN, TURN_LEFT, TURN_RIGHT };
 
         return new ExtendedBlockState(this, listedProperties, unlistedProperties);
+    }
+
+    protected TileEntityConveyor getTileEntity(World worldIn, BlockPos pos)
+    {
+        if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityConveyor)
+            return (TileEntityConveyor) worldIn.getTileEntity(pos);
+
+        return null;
     }
 }

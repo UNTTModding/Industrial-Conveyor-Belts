@@ -3,6 +3,7 @@ package com.untt.icb.block;
 import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
 import com.untt.icb.tileentity.TileEntityConveyor;
 import com.untt.icb.tileentity.TileEntityConveyorBase;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -54,6 +55,25 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {
         return new TileEntityConveyorBase();
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
+    {
+        return worldIn.getBlockState(pos.down()).isFullyOpaque();
+    }
+
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+    {
+        if (!worldIn.isRemote)
+        {
+            if (!this.canPlaceBlockAt(worldIn, pos))
+            {
+                this.dropBlockAsItem(worldIn, pos, state, 0);
+
+                worldIn.setBlockToAir(pos);
+            }
+        }
     }
 
     @Override
