@@ -134,15 +134,18 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
     @Nonnull
     public IBlockState getExtendedState(@Nonnull IBlockState state, IBlockAccess world, BlockPos pos)
     {
-        IExtendedBlockState extendedState = (IExtendedBlockState) state;
-
-        TileEntity tile = world.getTileEntity(pos);
-
-        if (tile != null && tile instanceof TileEntityConveyor)
+        if (state instanceof IExtendedBlockState)
         {
-            TileEntityConveyor tileConveyor = (TileEntityConveyor) tile;
+            IExtendedBlockState extendedState = (IExtendedBlockState) state;
 
-            return tileConveyor.writeExtendedBlockState(extendedState);
+            TileEntity tile = world.getTileEntity(pos);
+
+            if (tile != null && tile instanceof TileEntityConveyor)
+            {
+                TileEntityConveyor tileConveyor = (TileEntityConveyor) tile;
+
+                return tileConveyor.writeExtendedBlockState(extendedState);
+            }
         }
 
         return super.getExtendedState(state, world, pos);
