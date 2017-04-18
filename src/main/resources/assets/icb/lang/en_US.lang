@@ -3,3 +3,4 @@ itemGroup.icb=Immersive Conveyor Belts
 
 #Blocks
 tile.icb:conveyor.name=Conveyor
+tile.icb:conveyor_sorter.name=Sorter
