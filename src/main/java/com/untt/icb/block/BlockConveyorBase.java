@@ -1,8 +1,8 @@
 package com.untt.icb.block;
 
-import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
-import com.untt.icb.tileentity.TileEntityConveyor;
-import com.untt.icb.tileentity.TileEntityConveyorBase;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -26,8 +26,9 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
+import com.untt.icb.tileentity.TileEntityConveyor;
+import com.untt.icb.tileentity.TileEntityConveyorBase;
 
 public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 {
@@ -79,11 +80,8 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
     @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     {
-        if (!worldIn.isRemote)
-        {
-            if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityConveyorBase)
-                moveEntity(entityIn, (TileEntityConveyorBase) worldIn.getTileEntity(pos));
-        }
+		if (worldIn.getTileEntity(pos) instanceof TileEntityConveyorBase)
+			moveEntity(entityIn, (TileEntityConveyorBase) worldIn.getTileEntity(pos));
     }
 
     protected void moveEntity(Entity entity, TileEntityConveyorBase tileConveyor)
@@ -96,11 +94,29 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 
             double movementX = transportation_speed * facing.getFrontOffsetX();
             double movementZ = transportation_speed * facing.getFrontOffsetZ();
+			if (facing.getFrontOffsetX() == 0) {
+				double centerX = tileConveyor.getPos().getX() + .5;
+				double diff = entity.posX - centerX;
+				if (diff > .05)
+					movementX = -.03;
+				else if (diff < -.05)
+					movementX = .03;
+			}
+			if (facing.getFrontOffsetZ() == 0) {
+				double centerZ = tileConveyor.getPos().getZ() + .5;
+				double diff = entity.posZ - centerZ;
+				if (diff > .05)
+					movementZ = -.03;
+				else if (diff < -.05)
+					movementZ = .03;
+			}
 
-            entity.setPosition(entity.posX + movementX, entity.posY, entity.posZ + movementZ);
+            entity.motionX=movementX*1.5;
+            entity.motionZ=movementZ*1.5;
 
-            if (entity instanceof EntityItem)
-                ((EntityItem) entity).setAgeToCreativeDespawnTime();
+			if (entity instanceof EntityItem && entity.ticksExisted % 100 == 0) {
+				((EntityItem) entity).setAgeToCreativeDespawnTime();
+			}
         }
     }
 

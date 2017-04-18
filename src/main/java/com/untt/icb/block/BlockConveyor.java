@@ -33,8 +33,8 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
     public static final UnlistedPropertyBoolean TURN_LEFT = new UnlistedPropertyBoolean("turn_left");
     public static final UnlistedPropertyBoolean TURN_RIGHT = new UnlistedPropertyBoolean("turn_right");
 
-    private static final AxisAlignedBB BOUNDS_FLAT = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.16F, 1.0F);
-    private static final AxisAlignedBB BOUNDS_SLOPED = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 0.1F, 1.0F);
+    private static final AxisAlignedBB BOUNDS_FLAT = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.15, 1.0);
+    private static final AxisAlignedBB BOUNDS_SLOPED = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.1, 1.0);
 
     public BlockConveyor(String name)
     {
@@ -67,6 +67,13 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
         }
 
         return BOUNDS_FLAT;
+    }
+    
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    	AxisAlignedBB box=getBoundingBox(blockState, worldIn, pos);
+    	if(box.equals(BOUNDS_SLOPED))return box;
+    	return new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
     }
 
     @Override
