@@ -111,8 +111,10 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 					movementZ = .03;
 			}
 
-            entity.motionX=movementX*1.5;
-            entity.motionZ=movementZ*1.5;
+			entity.motionX = movementX * 1.5;
+			entity.motionZ = movementZ * 1.5;
+			if (entity instanceof EntityItem&&entity.world.isRemote)
+				entity.getEntityData().setBoolean("onBelt", true);
 
 			if (entity instanceof EntityItem && entity.ticksExisted % 100 == 0) {
 				((EntityItem) entity).setAgeToCreativeDespawnTime();
