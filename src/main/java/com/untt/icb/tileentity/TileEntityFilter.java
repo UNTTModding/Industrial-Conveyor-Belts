@@ -7,13 +7,13 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.ArrayList;
 
-public class TileEntityConveyorSorter extends TileEntityConveyorBase
+public class TileEntityFilter extends TileEntityICB
 {
     private ArrayList<ItemStack> filterLeft = new ArrayList<>();
     private ArrayList<ItemStack> filterRight = new ArrayList<>();
     private ArrayList<ItemStack> filterCenter = new ArrayList<>();
 
-    public TileEntityConveyorSorter()
+    public TileEntityFilter()
     {
 
     }
@@ -21,20 +21,20 @@ public class TileEntityConveyorSorter extends TileEntityConveyorBase
     public void addFilter(ItemStack stack, EnumFacing facing)
     {
         if (facing == getFacing().rotateYCCW())
-            filterLeft.add(stack);
+            filterLeft.add(new ItemStack(stack.getItem()));
 
         else if (facing == getFacing().rotateY())
-            filterRight.add(stack);
+            filterRight.add(new ItemStack(stack.getItem()));
 
-        else if (facing == getFacing().getOpposite())
-            filterCenter.add(stack);
+        else if (facing == getFacing())
+            filterCenter.add(new ItemStack(stack.getItem()));
     }
 
     public void sortItemStack(ItemStack stack)
     {
         EnumFacing facingSorted = getSideForItem(stack);
 
-        Vec3d posSpawn = new Vec3d(pos.offset(facingSorted).getX() + 0.5D, pos.offset(facingSorted).getY() + 0.2D, pos.offset(facingSorted).getZ() + 0.5D);
+        Vec3d posSpawn = new Vec3d(pos.offset(facingSorted).getX() + 0.3D, pos.offset(facingSorted).getY() + 0.3D, pos.offset(facingSorted).getZ() + 0.3D);
         Vec3d velocity = new Vec3d(0.1D * facingSorted.getFrontOffsetX(), 0.0D, 0.1D * facingSorted.getFrontOffsetZ());
 
         EntityItem entityItem = new EntityItem(world, posSpawn.xCoord, posSpawn.yCoord, posSpawn.zCoord, stack);
@@ -63,7 +63,7 @@ public class TileEntityConveyorSorter extends TileEntityConveyorBase
     private boolean filterContainsItem(ItemStack stack, ArrayList<ItemStack> filter)
     {
         for (ItemStack filterStack : filter)
-            if (stack.getItem() == filterStack.getItem()) return true;
+            if (stack.getItem().equals(filterStack.getItem())) return true;
 
         return false;
     }

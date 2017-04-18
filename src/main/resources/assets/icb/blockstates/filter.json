@@ -1,0 +1,11 @@
+{
+    "variants":
+    {
+        "normal": { "model": "icb:filter" },
+
+        "facing=north": { "model": "icb:filter", "y": 180 },
+        "facing=east": { "model": "icb:filter", "y": 270 },
+        "facing=south": { "model": "icb:filter", "y": 0 },
+        "facing=west": { "model": "icb:filter", "y": 90 }
+    }
+}

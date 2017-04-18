@@ -10,12 +10,13 @@ public class Names
     public static final class Blocks
     {
         public static final String CONVEYOR = "conveyor";
-        public static final String CONVEYOR_SORTER = "conveyor_sorter";
+        public static final String FILTER = "filter";
+        public static final String BRIDGE = "bridge";
     }
 
     public static final class TileEntities
     {
         public static final String CONVEYOR = "conveyor";
-        public static final String CONVEYOR_SORTER = "conveyor_sorter";
+        public static final String FILTER = "filter";
     }
 }

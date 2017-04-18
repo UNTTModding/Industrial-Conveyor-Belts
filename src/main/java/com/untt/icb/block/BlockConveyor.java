@@ -68,12 +68,12 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
 
         return BOUNDS_FLAT;
     }
-    
+
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-    	AxisAlignedBB box=getBoundingBox(blockState, worldIn, pos);
-    	if(box.equals(BOUNDS_SLOPED))return box;
-    	return new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
+        AxisAlignedBB box=getBoundingBox(blockState, worldIn, pos);
+        if(box.equals(BOUNDS_SLOPED))return box;
+        return new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
     }
 
     @Override
@@ -179,9 +179,36 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
 
                 if (tileConveyor.isSlopeUp())
                 {
-                    entity.onGround = false;
+                    EnumFacing facing = tileConveyor.getFacing();
 
-                    entity.setPosition(entity.posX, entity.posY + transportation_speed, entity.posZ);
+                    double movementY = transportation_speed;
+
+                    if (facing.getFrontOffsetX() == 1)
+                    {
+                        double endX = tileConveyor.getPos().getX() + 1;
+                        double diff = endX - entity.posX;
+
+                        if (diff < 0.15)
+                            movementY *= 0.9D;
+                    }
+
+                    if (facing.getFrontOffsetZ() == 1)
+                    {
+                        double endZ = tileConveyor.getPos().getZ() + 1;
+                        double diff = endZ - entity.posZ;
+
+                        if (diff < 0.15)
+                            movementY *= 0.9D;
+                    }
+
+                    entity.onGround = false;
+                    entity.motionY += movementY * 1.0D;
+                }
+
+                else if (tileConveyor.isSlopeDown())
+                {
+                    entity.onGround = false;
+                    entity.motionY += 0.05D;
                 }
             }
         }

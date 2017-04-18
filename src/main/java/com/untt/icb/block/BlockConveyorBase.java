@@ -1,8 +1,8 @@
 package com.untt.icb.block;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
+import com.untt.icb.tileentity.TileEntityConveyor;
+import com.untt.icb.tileentity.TileEntityConveyorBase;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -26,15 +26,14 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
-import com.untt.icb.tileentity.TileEntityConveyor;
-import com.untt.icb.tileentity.TileEntityConveyorBase;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 {
     public static final UnlistedPropertyFacing FACING = new UnlistedPropertyFacing("facing");
 
-    protected static final double transportation_speed = 0.05D;
+    protected static final double transportation_speed = 0.07D;
 
     public BlockConveyorBase(String name)
     {
@@ -61,7 +60,7 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
     @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
     {
-        return worldIn.getBlockState(pos.down()).isFullyOpaque();
+        return worldIn.getBlockState(pos.down()).isFullyOpaque() || worldIn.getBlockState(pos.down()).getBlock() instanceof BlockBridge;
     }
 
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
@@ -113,7 +112,8 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 
 			entity.motionX = movementX * 1.5;
 			entity.motionZ = movementZ * 1.5;
-			if (entity instanceof EntityItem&&entity.world.isRemote)
+
+			if (entity instanceof EntityItem && entity.world.isRemote)
 				entity.getEntityData().setBoolean("onBelt", true);
 
 			if (entity instanceof EntityItem && entity.ticksExisted % 100 == 0) {

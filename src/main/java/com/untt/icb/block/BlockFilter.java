@@ -1,6 +1,6 @@
 package com.untt.icb.block;
 
-import com.untt.icb.tileentity.TileEntityConveyorSorter;
+import com.untt.icb.tileentity.TileEntityFilter;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -11,23 +11,30 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class BlockConveyorSorter extends BlockConveyorBase implements ITileEntityProvider
+public class BlockFilter extends BlockICB implements ITileEntityProvider
 {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
-    private static final AxisAlignedBB BOUNDS = new AxisAlignedBB(0.1F, 0.0F, 0.1F, 0.9F, 1.0F, 0.9F);
+    private static final AxisAlignedBB COLLISION_NORTH = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 0.9F);
+    private static final AxisAlignedBB COLLISION_EAST = new AxisAlignedBB(0.1F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
+    private static final AxisAlignedBB COLLISION_SOUTH = new AxisAlignedBB(0.0F, 0.0F, 0.1F, 1.0F, 1.0F, 1.0F);
+    private static final AxisAlignedBB COLLISION_WEST = new AxisAlignedBB(0.0F, 0.0F, 0.0F, 0.9F, 1.0F, 1.0F);
 
-    public BlockConveyorSorter(String name)
+    public BlockFilter(String name)
     {
         super(name);
 
@@ -45,13 +52,22 @@ public class BlockConveyorSorter extends BlockConveyorBase implements ITileEntit
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta)
     {
-        return new TileEntityConveyorSorter();
+        return new TileEntityFilter();
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
+    @Nullable
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
     {
-        return BOUNDS;
+        switch (blockState.getValue(FACING))
+        {
+            case NORTH: return COLLISION_NORTH;
+            case EAST: return COLLISION_EAST;
+            case SOUTH: return COLLISION_SOUTH;
+            case WEST: return COLLISION_WEST;
+        }
+
+        return super.getCollisionBoundingBox(blockState, worldIn, pos);
     }
 
     @Override
@@ -65,11 +81,14 @@ public class BlockConveyorSorter extends BlockConveyorBase implements ITileEntit
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
     {
-        if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityConveyorSorter)
+        if (!worldIn.isRemote)
         {
-            TileEntityConveyorSorter tileSorter = (TileEntityConveyorSorter) worldIn.getTileEntity(pos);
+            if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityFilter)
+            {
+                TileEntityFilter tileSorter = (TileEntityFilter) worldIn.getTileEntity(pos);
 
-            tileSorter.addFilter(playerIn.getHeldItem(hand), facing);
+                tileSorter.addFilter(playerIn.getHeldItem(hand), facing);
+            }
         }
 
         return true;
@@ -84,9 +103,9 @@ public class BlockConveyorSorter extends BlockConveyorBase implements ITileEntit
             {
                 EntityItem entityItem = (EntityItem) entityIn;
 
-                if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityConveyorSorter)
+                if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityFilter)
                 {
-                    TileEntityConveyorSorter tileSorter = (TileEntityConveyorSorter) worldIn.getTileEntity(pos);
+                    TileEntityFilter tileSorter = (TileEntityFilter) worldIn.getTileEntity(pos);
 
                     tileSorter.sortItemStack(entityItem.getEntityItem());
 
@@ -115,5 +134,44 @@ public class BlockConveyorSorter extends BlockConveyorBase implements ITileEntit
     protected BlockStateContainer createBlockState()
     {
         return new BlockStateContainer(this, FACING);
+    }
+
+    @Override
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public EnumBlockRenderType getRenderType(IBlockState state)
+    {
+        return EnumBlockRenderType.MODEL;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public boolean isFullCube(IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    @SideOnly(Side.CLIENT)
+    public boolean isOpaqueCube(IBlockState state)
+    {
+        return true;
+    }
+
+    @Override
+    @SuppressWarnings("deprecation")
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState blockState, @Nonnull IBlockAccess blockAccess, @Nonnull BlockPos pos, EnumFacing side)
+    {
+        return true;
+    }
+
+    @Override
+    @Nonnull
+    @SideOnly(Side.CLIENT)
+    public BlockRenderLayer getBlockLayer()
+    {
+        return BlockRenderLayer.SOLID;
     }
 }
