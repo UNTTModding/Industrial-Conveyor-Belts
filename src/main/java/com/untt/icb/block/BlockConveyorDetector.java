@@ -8,11 +8,15 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -67,14 +71,41 @@ public class BlockConveyorDetector extends BlockConveyorBase implements ITileEnt
         super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
 
         worldIn.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing()).withProperty(POWERED, false));
+    }
+
+    @Override
+    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
+    {
+        super.onBlockAdded(worldIn, pos, state);
 
         updateRedstoneOutput(worldIn, pos, state);
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    {
+        if (!worldIn.isRemote)
+        {
+            if (!playerIn.getHeldItem(hand).isEmpty() && worldIn.getTileEntity(pos) instanceof TileEntityConveyorDetector)
+            {
+                TileEntityConveyorDetector tileDetector = (TileEntityConveyorDetector) worldIn.getTileEntity(pos);
+
+                tileDetector.addFilter(playerIn.getHeldItem(hand));
+
+                playerIn.sendMessage(new TextComponentString("Added FilterItem: " + playerIn.getHeldItem(hand).getDisplayName()));
+            }
+        }
+
+        return true;
     }
 
     @Override
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn)
     {
         super.onEntityCollidedWithBlock(worldIn, pos, state, entityIn);
+
+        if (!worldIn.isRemote && entityIn instanceof EntityItem)
+            updateRedstoneOutput(worldIn, pos, state);
     }
 
     @Override
@@ -123,7 +154,7 @@ public class BlockConveyorDetector extends BlockConveyorBase implements ITileEnt
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
-        if (!world.isRemote)
+        if (!world.isRemote && state.getValue(POWERED))
             updateRedstoneOutput(world, pos, state);
     }
 
@@ -131,28 +162,35 @@ public class BlockConveyorDetector extends BlockConveyorBase implements ITileEnt
     {
         if (!world.isRemote)
         {
-            if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof TileEntityConveyorDetector)
+            TileEntityConveyorDetector tileDetector = (TileEntityConveyorDetector) world.getTileEntity(pos);
+
+            // Temp "Fix" for item getting stuck (Facing of TE is reset)
+            if (tileDetector.getFacing() != state.getValue(FACING))
+                tileDetector.setFacing(state.getValue(FACING));
+
+            int count = tileDetector.findMatchingItems(world);
+            boolean powered = state.getValue(POWERED);
+
+            if (count > 0 && !powered)
             {
-                TileEntityConveyorDetector tileDetector = (TileEntityConveyorDetector) world.getTileEntity(pos);
-
-                int count = tileDetector.findMatchingItems(world);
-                boolean powered = state.getValue(POWERED);
-
-                if (count > 0 && !powered)
-                {
-                    world.setBlockState(pos, state.withProperty(FACING, state.getValue(FACING)).withProperty(POWERED, true), 1 | 2);
-                    world.notifyNeighborsOfStateExcept(pos.down(), this, EnumFacing.UP);
-                }
-
-                else if (count == 0 && powered)
-                {
-                    world.setBlockState(pos, state.withProperty(FACING, state.getValue(FACING)).withProperty(POWERED, false), 1 | 2);
-                    world.notifyNeighborsOfStateExcept(pos.down(), this, EnumFacing.UP);
-                }
-
-                world.scheduleUpdate(pos, this, tickRate(world));
-                world.updateComparatorOutputLevel(pos, this);
+                world.setBlockState(pos, state.withProperty(POWERED, true), 1 | 2);
+                world.notifyNeighborsOfStateChange(pos, this, false);
+                world.notifyNeighborsOfStateChange(pos.down(), this, false);
+                world.markBlockRangeForRenderUpdate(pos, pos);
             }
+
+            else if (count == 0 && powered)
+            {
+                world.setBlockState(pos, state.withProperty(POWERED, false), 1 | 2);
+                world.notifyNeighborsOfStateChange(pos, this, false);
+                world.notifyNeighborsOfStateChange(pos.down(), this, false);
+                world.markBlockRangeForRenderUpdate(pos, pos);
+            }
+
+            if (count > 0)
+                world.scheduleUpdate(new BlockPos(pos), this, tickRate(world));
+
+            world.updateComparatorOutputLevel(pos, this);
         }
     }
 

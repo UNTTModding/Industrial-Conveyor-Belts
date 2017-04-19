@@ -3,15 +3,14 @@ package com.untt.icb.tileentity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.ArrayList;
 
 public class TileEntityFilter extends TileEntityICB
 {
-    private ArrayList<ItemStack> filterLeft = new ArrayList<>();
-    private ArrayList<ItemStack> filterRight = new ArrayList<>();
-    private ArrayList<ItemStack> filterCenter = new ArrayList<>();
+    private NonNullList<ItemStack> filterLeft = NonNullList.create();
+    private NonNullList<ItemStack> filterRight = NonNullList.create();
+    private NonNullList<ItemStack> filterCenter = NonNullList.create();
 
     public TileEntityFilter()
     {
@@ -63,7 +62,7 @@ public class TileEntityFilter extends TileEntityICB
             return EnumFacing.UP;
     }
 
-    private boolean filterContainsItem(ItemStack stack, ArrayList<ItemStack> filter)
+    private boolean filterContainsItem(ItemStack stack, NonNullList<ItemStack> filter)
     {
         for (ItemStack filterStack : filter)
             if (stack.getItem().equals(filterStack.getItem())) return true;

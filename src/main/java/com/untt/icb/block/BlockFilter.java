@@ -1,8 +1,6 @@
 package com.untt.icb.block;
 
 import com.untt.icb.tileentity.TileEntityFilter;
-import com.untt.icb.utility.LogHelper;
-
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -92,7 +90,7 @@ public class BlockFilter extends BlockICB implements ITileEntityProvider
 
                 tileSorter.addFilter(playerIn.getHeldItem(hand), facing);
                 
-                playerIn.sendMessage(new TextComponentString("Added: "+playerIn.getHeldItem(hand).getDisplayName()));
+                playerIn.sendMessage(new TextComponentString("Added FilterItem: " + playerIn.getHeldItem(hand).getDisplayName()));
             }
         }
 
