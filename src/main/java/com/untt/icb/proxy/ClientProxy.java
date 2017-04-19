@@ -31,16 +31,13 @@ public class ClientProxy extends CommonProxy
 		{
 			@Override
 			public void doRender(EntityItem entity, double x, double y, double z, float entityYaw, float partialTicks) {
-				if (entity.getEntityData().getBoolean("onBelt"))
-				{	
-					float f1 = shouldBob() ? MathHelper.sin(((float) entity.getAge() + Minecraft.getMinecraft().getRenderPartialTicks()) / 10.0F + entity.hoverStart) * 0.1F + 0.1F : 0;
-					GlStateManager.translate(0f, -f1, 0f);
-					
-				}
+				float f1 = entity.getEntityData().getBoolean("onBelt") && shouldBob() ? MathHelper.sin(((float) entity.getAge() + Minecraft.getMinecraft().getRenderPartialTicks()) / 10.0F + entity.hoverStart) * 0.1F + 0.1F : 0;
+				GlStateManager.translate(0f, -f1, 0f);
 				if (previous != null)
 					previous.doRender(entity, x, y, z, entityYaw, partialTicks);
 				else
 					super.doRender(entity, x, y, z, entityYaw, partialTicks);
+				GlStateManager.translate(0f, f1, 0f);
 			}
 		});
 

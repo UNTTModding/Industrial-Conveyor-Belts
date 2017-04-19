@@ -81,7 +81,7 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
         AxisAlignedBB box = getBoundingBox(blockState, worldIn, pos);
         
 		    if (box.equals(BOUNDS_FLAT))
-			      return new COLLISION;
+			      return COLLISION;
             
 		    return box;
     }
