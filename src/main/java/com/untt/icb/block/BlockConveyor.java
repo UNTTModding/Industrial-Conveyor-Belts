@@ -36,6 +36,8 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
     private static final AxisAlignedBB BOUNDS_FLAT = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.15, 1.0);
     private static final AxisAlignedBB BOUNDS_SLOPED = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.1, 1.0);
 
+    private static final AxisAlignedBB COLLISION = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
+
     public BlockConveyor(String name)
     {
         super(name);
@@ -70,10 +72,14 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        AxisAlignedBB box=getBoundingBox(blockState, worldIn, pos);
-        if(box.equals(BOUNDS_SLOPED))return box;
-        return new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
+    {
+        AxisAlignedBB box = getBoundingBox(blockState, worldIn, pos);
+
+        if (box.equals(BOUNDS_SLOPED))
+            return box;
+
+        return COLLISION;
     }
 
     @Override

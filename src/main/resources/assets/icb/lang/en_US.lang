@@ -2,6 +2,9 @@
 itemGroup.icb=Immersive Conveyor Belts
 
 #Blocks
-tile.icb:conveyor.name=Conveyor
-tile.icb:filter.name=Filter
 tile.icb:bridge.name=Bridge
+
+tile.icb:conveyor.name=Conveyor
+tile.icb:conveyor_detector.name=Detector Conveyor
+
+tile.icb:filter.name=Filter
