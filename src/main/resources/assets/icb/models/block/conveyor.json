@@ -1,7 +1,9 @@
 {
 	"textures": {
 		"particle": "icb:blocks/conveyor",
-		"conveyor": "icb:blocks/conveyor"
+		"conveyor": "icb:blocks/conveyor",
+		"conveyor_turn": "icb:blocks/conveyor_turn",
+		"conveyor_turn_reverse": "icb:blocks/conveyor_turn_reverse"
 	},
 	"elements": [
 		{

@@ -91,7 +91,10 @@ public class BakedModelConveyor implements IPerspectiveAwareModel
                 modelConveyor = modelConveyorTurnLeft;
 
             if (state.get(3))
+            {
                 modelConveyor = modelConveyorTurnRight;
+                facing = facing.rotateY();
+            }
 
             bakedModel = modelConveyor.bake(new TRSRTransformation(facing), format, textureGetter::apply);
 
