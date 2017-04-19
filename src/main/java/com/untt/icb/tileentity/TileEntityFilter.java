@@ -20,13 +20,13 @@ public class TileEntityFilter extends TileEntityICB
     public void addFilter(ItemStack stack, EnumFacing facing)
     {
         if (facing == getFacing().rotateYCCW())
-            filterLeft.add(new ItemStack(stack.getItem()));
+            filterLeft.add(stack.copy());
 
         else if (facing == getFacing().rotateY())
-            filterRight.add(new ItemStack(stack.getItem()));
+            filterRight.add(stack.copy());
 
         else if (facing == getFacing())
-            filterCenter.add(new ItemStack(stack.getItem()));
+            filterCenter.add(stack.copy());
     }
 
     public void sortItemStack(ItemStack stack)
@@ -64,9 +64,6 @@ public class TileEntityFilter extends TileEntityICB
 
     private boolean filterContainsItem(ItemStack stack, NonNullList<ItemStack> filter)
     {
-        for (ItemStack filterStack : filter)
-            if (stack.getItem().equals(filterStack.getItem())) return true;
-
-        return false;
+        return filter.stream().anyMatch(fs->fs.isItemEqual(stack));
     }
 }

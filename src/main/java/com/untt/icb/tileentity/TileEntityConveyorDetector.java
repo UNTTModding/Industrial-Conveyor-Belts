@@ -23,7 +23,7 @@ public class TileEntityConveyorDetector extends TileEntityConveyorBase
 
     public void addFilter(ItemStack stack)
     {
-        filter.add(new ItemStack(stack.getItem()));
+        filter.add(stack.copy());
     }
 
     @Override
@@ -46,7 +46,7 @@ public class TileEntityConveyorDetector extends TileEntityConveyorBase
             else if (filterContainsItem(item.getEntityItem()))
                 count ++;
         }
-
+        
         setCount(count);
 
         return count;
@@ -54,10 +54,7 @@ public class TileEntityConveyorDetector extends TileEntityConveyorBase
 
     private boolean filterContainsItem(ItemStack stack)
     {
-        for (ItemStack filterStack : filter)
-            if (stack.getItem().equals(filterStack.getItem())) return true;
-
-        return false;
+    	return filter.stream().anyMatch(fs->fs.isItemEqual(stack));
     }
 
     public int getCount()

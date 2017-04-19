@@ -1,6 +1,7 @@
 package com.untt.icb.block;
 
 import com.untt.icb.tileentity.TileEntityFilter;
+
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -72,11 +73,8 @@ public class BlockFilter extends BlockICB implements ITileEntityProvider
     }
 
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-    {
-        worldIn.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing()));
-
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+    	return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
     }
 
     @Override

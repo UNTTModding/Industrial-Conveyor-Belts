@@ -1,6 +1,7 @@
 package com.untt.icb.block;
 
 import com.untt.icb.tileentity.TileEntityConveyorDetector;
+
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
@@ -22,6 +23,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.util.Random;
 
 public class BlockConveyorDetector extends BlockConveyorBase implements ITileEntityProvider
@@ -64,13 +66,10 @@ public class BlockConveyorDetector extends BlockConveyorBase implements ITileEnt
     {
         return COLLISION;
     }
-
+    
     @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
-    {
-        super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
-
-        worldIn.setBlockState(pos, state.withProperty(FACING, placer.getHorizontalFacing()).withProperty(POWERED, false));
+    public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) {
+    	return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing()).withProperty(POWERED, false);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.untt.icb.block;
 import com.untt.icb.block.unlistedproperties.UnlistedPropertyBoolean;
 import com.untt.icb.tileentity.TileEntityConveyor;
 import com.untt.icb.tileentity.TileEntityConveyorBase;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.IProperty;
@@ -15,6 +16,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -180,43 +183,53 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
             {
                 TileEntityConveyor tileConveyor = (TileEntityConveyor) tileConveyorBase;
 
+                double factor=entity instanceof EntityLivingBase?2.2:1.;
+                
                 if (tileConveyor.isSlopeUp())
                 {
                     EnumFacing facing = tileConveyor.getFacing();
 
                     double movementY = transportation_speed;
 
-                    if (facing.getFrontOffsetX() == 1)
-                    {
-                        double endX = tileConveyor.getPos().getX() + 1;
-                        double diff = endX - entity.posX;
-
-                        if (diff < 0.15)
-                            movementY *= 0.9D;
-                    }
-
-                    if (facing.getFrontOffsetZ() == 1)
-                    {
-                        double endZ = tileConveyor.getPos().getZ() + 1;
-                        double diff = endZ - entity.posZ;
-
-                        if (diff < 0.15)
-                            movementY *= 0.9D;
-                    }
-
-//                    System.out.println(entity.motionY+" mot");
+//                    if (facing.getFrontOffsetX() == 1)
+//                    {
+//                        double endX = tileConveyor.getPos().getX() + 1;
+//                        double diff = endX - entity.posX;
+//
+//                        if (diff < 0.15)
+//                            movementY *= 0.9D;
+//                    }
+//
+//                    if (facing.getFrontOffsetZ() == 1)
+//                    {
+//                        double endZ = tileConveyor.getPos().getZ() + 1;
+//                        double diff = endZ - entity.posZ;
+//
+//                        if (diff < 0.15)
+//                            movementY *= 0.9D;
+//                    }
+                    	
 					entity.onGround = false;
-					entity.motionY += movementY * 0.7D;
-					double diff=Math.abs(entity.posY - tileConveyor.getPos().getY());
-					if (diff > .9) {
-						entity.setPosition(entity.posX + .1 * facing.getFrontOffsetX(), entity.posY + .2, entity.posZ + .1 * facing.getFrontOffsetZ());
+					entity.fallDistance=0;
+					entity.motionY += movementY * 0.7D*factor;
+					entity.motionY=MathHelper.clamp(entity.motionY, 0., factor*.1);
+					Vec3d next = new Vec3d(tileConveyor.getPos().offset(facing)).addVector(.5, .5, .5);
+					Vec3d thiss = entity.getPositionVector();
+					thiss = new Vec3d(thiss.xCoord, next.yCoord, thiss.zCoord);
+					double diffXZ = thiss.distanceTo(next);
+					double diffY = Math.abs(entity.posY - tileConveyor.getPos().getY());
+					if (diffY > .9) {
+						entity.setPosition(entity.posX, entity.posY + .25, entity.posZ);
+						if(diffXZ<.9)
+							entity.setPosition(entity.posX + .15 * facing.getFrontOffsetX(), entity.posY, entity.posZ + .15 * facing.getFrontOffsetZ());
 					}
                 }
 
                 else if (tileConveyor.isSlopeDown())
                 {
                     entity.onGround = false;
-                    entity.motionY += 0.05D;
+                    entity.fallDistance=0;
+                    entity.motionY += 0.05D*factor;
                 }
             }
         }

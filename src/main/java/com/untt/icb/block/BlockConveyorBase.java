@@ -15,6 +15,8 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -103,17 +105,17 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 				double centerX = tileConveyor.getPos().getX() + .5;
 				double diff = entity.posX - centerX;
 				if (diff > .05)
-					movementX = -.03;
+					movementX = -.04;
 				else if (diff < -.05)
-					movementX = .03;
+					movementX = .04;
 			}
 			if (facing.getFrontOffsetZ() == 0) {
 				double centerZ = tileConveyor.getPos().getZ() + .5;
 				double diff = entity.posZ - centerZ;
 				if (diff > .05)
-					movementZ = -.03;
+					movementZ = -.04;
 				else if (diff < -.05)
-					movementZ = .03;
+					movementZ = .04;
 			}
 			
 			if(tileConveyor instanceof TileEntityConveyor){
@@ -130,7 +132,10 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 				entity.getEntityData().setBoolean("onBelt", true);
 
 			if (entity instanceof EntityItem && entity.ticksExisted % 100 == 0) {
-				((EntityItem) entity).setAgeToCreativeDespawnTime();
+				NBTTagCompound tag=new NBTTagCompound();
+				((EntityItem) entity).writeEntityToNBT(tag);
+				tag.setShort("Age", (short)2400);
+				((EntityItem) entity).readEntityFromNBT(tag);
 			}
         }
     }
