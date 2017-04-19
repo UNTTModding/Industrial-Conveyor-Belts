@@ -34,11 +34,14 @@ public class TileEntityFilter extends TileEntityICB
     {
         EnumFacing facingSorted = getSideForItem(stack);
 
-        Vec3d posSpawn = new Vec3d(pos.offset(facingSorted).getX() + 0.3D, pos.offset(facingSorted).getY() + 0.3D, pos.offset(facingSorted).getZ() + 0.3D);
-        Vec3d velocity = new Vec3d(0.1D * facingSorted.getFrontOffsetX(), 0.0D, 0.1D * facingSorted.getFrontOffsetZ());
+        Vec3d posSpawn = new Vec3d(pos.offset(facingSorted).getX() + 0.5D-facingSorted.getFrontOffsetX()*.35, pos.offset(facingSorted).getY() + 0.4D, pos.offset(facingSorted).getZ() + 0.5D-facingSorted.getFrontOffsetZ()*.35);
+        Vec3d velocity = new Vec3d(0.03D * facingSorted.getFrontOffsetX(), 0.1D, 0.03D * facingSorted.getFrontOffsetZ());
 
         EntityItem entityItem = new EntityItem(world, posSpawn.xCoord, posSpawn.yCoord, posSpawn.zCoord, stack);
-        entityItem.setVelocity(velocity.xCoord, velocity.yCoord, velocity.zCoord);
+        entityItem.isAirBorne=true;
+        entityItem.motionX=velocity.xCoord;
+        entityItem.motionY=velocity.yCoord;
+        entityItem.motionZ=velocity.zCoord;
 
         world.spawnEntity(entityItem);
     }

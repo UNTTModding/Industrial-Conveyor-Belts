@@ -1,8 +1,11 @@
 package com.untt.icb.block;
 
+import java.util.List;
+
 import com.untt.icb.block.unlistedproperties.UnlistedPropertyBoolean;
 import com.untt.icb.tileentity.TileEntityConveyor;
 import com.untt.icb.tileentity.TileEntityConveyorBase;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.IProperty;
@@ -18,6 +21,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -72,16 +76,16 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) 
     {
         AxisAlignedBB box = getBoundingBox(blockState, worldIn, pos);
-
-        if (box.equals(BOUNDS_SLOPED))
-            return box;
-
-        return COLLISION;
+        
+		    if (box.equals(BOUNDS_FLAT))
+			      return new COLLISION;
+            
+		    return box;
     }
-
+    
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
     {
@@ -140,11 +144,11 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
                 conveyorFrontDown.setSlopeDown(true);
 
             if (conveyorBackDown != null && conveyorBackDown.getFacing() == facing)
-                conveyorBackDown.setSlopeUP(true);
+                conveyorBackDown.setSlopeUp(true);
 
             // Set state
             tileConveyor.setFacing(facing);
-            tileConveyor.setSlopeUP(slopeUp);
+            tileConveyor.setSlopeUp(slopeUp);
             tileConveyor.setSlopeDown(slopeDown);
             tileConveyor.setTurnLeft(turnLeft);
             tileConveyor.setTagTurnRight(turnRight);
@@ -162,7 +166,7 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
             if (tileConveyor != null && !worldIn.getBlockState(fromPos).isFullyOpaque())
             {
                 if (tileConveyor.isSlopeUp() && fromPos.equals(pos.offset(tileConveyor.getFacing())))
-                    tileConveyor.setSlopeUP(false);
+                    tileConveyor.setSlopeUp(false);
 
                 if (tileConveyor.isSlopeDown() && fromPos.equals(pos.offset(tileConveyor.getFacing().getOpposite())))
                     tileConveyor.setSlopeDown(false);
@@ -177,7 +181,7 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
     {
         super.moveEntity(entity, tileConveyorBase);
 
-        if (entity.canBePushed() || entity instanceof EntityItem || entity instanceof EntityLiving || entity instanceof EntityXPOrb)
+        if (validEntity(entity))
         {
             if (tileConveyorBase instanceof TileEntityConveyor)
             {
@@ -207,8 +211,13 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
                             movementY *= 0.9D;
                     }
 
-                    entity.onGround = false;
-                    entity.motionY += movementY * 1.0D;
+//                    System.out.println(entity.motionY+" mot");
+					entity.onGround = false;
+					entity.motionY += movementY * 0.7D;
+					double diff=Math.abs(entity.posY - tileConveyor.getPos().getY());
+					if (diff > .9) {
+						entity.setPosition(entity.posX + .1 * facing.getFrontOffsetX(), entity.posY + .2, entity.posZ + .1 * facing.getFrontOffsetZ());
+					}
                 }
 
                 else if (tileConveyor.isSlopeDown())

@@ -3,6 +3,7 @@ package com.untt.icb.block;
 import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
 import com.untt.icb.tileentity.TileEntityConveyor;
 import com.untt.icb.tileentity.TileEntityConveyorBase;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -13,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
@@ -82,10 +84,14 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 		if (worldIn.getTileEntity(pos) instanceof TileEntityConveyorBase)
 			moveEntity(entityIn, (TileEntityConveyorBase) worldIn.getTileEntity(pos));
     }
+    
+    protected boolean validEntity(Entity entity){
+    	return (entity.canBePushed() || entity instanceof EntityItem || entity instanceof EntityLiving || entity instanceof EntityXPOrb)&&(!(entity instanceof EntityPlayer)||!((EntityPlayer)entity).capabilities.isFlying);
+    }
 
     protected void moveEntity(Entity entity, TileEntityConveyorBase tileConveyor)
     {
-        if (entity.canBePushed() || entity instanceof EntityItem || entity instanceof EntityLiving || entity instanceof EntityXPOrb)
+        if (validEntity(entity))
         {
             EnumFacing facing = tileConveyor.getFacing();
 
@@ -108,6 +114,13 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider
 					movementZ = -.03;
 				else if (diff < -.05)
 					movementZ = .03;
+			}
+			
+			if(tileConveyor instanceof TileEntityConveyor){
+				if(((TileEntityConveyor) tileConveyor).isSlopeUp()||((TileEntityConveyor) tileConveyor).isSlopeDown())
+				{	movementX*=.5;
+					movementZ*=.5;
+				}
 			}
 
 			entity.motionX = movementX * 1.5;

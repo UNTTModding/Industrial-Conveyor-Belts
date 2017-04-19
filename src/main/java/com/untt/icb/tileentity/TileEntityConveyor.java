@@ -76,7 +76,7 @@ public class TileEntityConveyor extends TileEntityConveyorBase
         return getTileData().getBoolean(TAG_TURN_RIGHT);
     }
 
-    public void setSlopeUP(boolean slopeUP)
+    public void setSlopeUp(boolean slopeUP)
     {
         getTileData().setBoolean(TAG_SLOPE_UP, slopeUP);
     }
