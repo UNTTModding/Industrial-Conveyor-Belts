@@ -1,6 +1,8 @@
 package com.untt.icb.block;
 
 import com.untt.icb.tileentity.TileEntityFilter;
+import com.untt.icb.utility.LogHelper;
+
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -17,6 +19,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -83,11 +86,13 @@ public class BlockFilter extends BlockICB implements ITileEntityProvider
     {
         if (!worldIn.isRemote)
         {
-            if (worldIn.getTileEntity(pos) != null && worldIn.getTileEntity(pos) instanceof TileEntityFilter)
+            if (!playerIn.getHeldItem(hand).isEmpty() && worldIn.getTileEntity(pos) instanceof TileEntityFilter)
             {
                 TileEntityFilter tileSorter = (TileEntityFilter) worldIn.getTileEntity(pos);
 
                 tileSorter.addFilter(playerIn.getHeldItem(hand), facing);
+                
+                playerIn.sendMessage(new TextComponentString("Added: "+playerIn.getHeldItem(hand).getDisplayName()));
             }
         }
 
