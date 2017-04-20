@@ -1,6 +1,7 @@
 package com.untt.icb.tileentity;
 
 import com.untt.icb.block.BlockConveyor;
+import com.untt.icb.reference.Names;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -18,6 +19,26 @@ public class TileEntityConveyorBase extends TileEntityICB
     public TileEntityConveyorBase()
     {
         super();
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound)
+    {
+        super.readFromNBT(compound);
+
+        if (compound.hasKey(Names.NBT.FACING))
+            getTileData().setInteger(TAG_FACING, compound.getInteger(Names.NBT.FACING));
+    }
+
+    @Override
+    @Nonnull
+    public NBTTagCompound writeToNBT(NBTTagCompound compound)
+    {
+        super.writeToNBT(compound);
+
+        compound.setInteger(Names.NBT.FACING, getFacing().getIndex());
+
+        return compound;
     }
 
     public IExtendedBlockState writeExtendedBlockState(IExtendedBlockState state)
