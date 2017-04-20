@@ -16,11 +16,6 @@ public class TileEntityConveyorBase extends TileEntityICB
 {
     protected static final String TAG_FACING = "facing";
 
-    public TileEntityConveyorBase()
-    {
-        super();
-    }
-
     @Override
     public void readFromNBT(NBTTagCompound compound)
     {

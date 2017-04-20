@@ -1,11 +1,6 @@
 {
     "variants":
     {
-        "normal": { "model": "icb:bridge" },
-
-        "facing=north": { "model": "icb:bridge", "y": 0 },
-        "facing=east": { "model": "icb:bridge", "y": 90 },
-        "facing=south": { "model": "icb:bridge", "y": 180 },
-        "facing=west": { "model": "icb:bridge", "y": 270 }
+        "normal": { "model": "icb:bridge" }
     }
 }

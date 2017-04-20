@@ -32,6 +32,7 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
     public static final UnlistedPropertyBoolean SLOPE_DOWN = new UnlistedPropertyBoolean("slope_down");
     public static final UnlistedPropertyBoolean TURN_LEFT = new UnlistedPropertyBoolean("turn_left");
     public static final UnlistedPropertyBoolean TURN_RIGHT = new UnlistedPropertyBoolean("turn_right");
+    public static final UnlistedPropertyBoolean POWERED = new UnlistedPropertyBoolean("powered");
 
     private static final AxisAlignedBB BOUNDS_FLAT = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.15, 1.0);
     private static final AxisAlignedBB BOUNDS_SLOPED = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.1, 1.0);
@@ -106,21 +107,21 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
             BlockPos posFrontUp = pos.offset(facing).up();
             BlockPos posBackUp = pos.offset(facing.getOpposite()).up();
 
-            if (worldIn.getTileEntity(posFrontUp) != null && worldIn.getTileEntity(posFrontUp) instanceof TileEntityConveyor)
-                slopeUp = ((TileEntityConveyor) worldIn.getTileEntity(posFrontUp)).getFacing() == facing;
+            if (worldIn.getTileEntity(posFrontUp) != null && worldIn.getTileEntity(posFrontUp) instanceof TileEntityConveyorBase)
+                slopeUp = ((TileEntityConveyorBase) worldIn.getTileEntity(posFrontUp)).getFacing() == facing;
 
-            if (worldIn.getTileEntity(posBackUp) != null && worldIn.getTileEntity(posBackUp) instanceof TileEntityConveyor)
-                slopeDown = ((TileEntityConveyor) worldIn.getTileEntity(posBackUp)).getFacing() == facing;
+            if (worldIn.getTileEntity(posBackUp) != null && worldIn.getTileEntity(posBackUp) instanceof TileEntityConveyorBase)
+                slopeDown = ((TileEntityConveyorBase) worldIn.getTileEntity(posBackUp)).getFacing() == facing;
 
             // Check if conveyor is a turn
             BlockPos posLeft = pos.offset(facing.rotateYCCW());
             BlockPos posRight = pos.offset(facing.rotateY());
 
-            if (worldIn.getTileEntity(posLeft) != null && worldIn.getTileEntity(posLeft) instanceof TileEntityConveyor)
-                turnLeft = ((TileEntityConveyor) worldIn.getTileEntity(posLeft)).getFacing() == facing.rotateY();
+            if (worldIn.getTileEntity(posLeft) != null && worldIn.getTileEntity(posLeft) instanceof TileEntityConveyorBase)
+                turnLeft = ((TileEntityConveyorBase) worldIn.getTileEntity(posLeft)).getFacing() == facing.rotateY();
 
-            if (worldIn.getTileEntity(posRight) != null && worldIn.getTileEntity(posRight) instanceof TileEntityConveyor)
-                turnRight = ((TileEntityConveyor) worldIn.getTileEntity(posRight)).getFacing() == facing.rotateYCCW();
+            if (worldIn.getTileEntity(posRight) != null && worldIn.getTileEntity(posRight) instanceof TileEntityConveyorBase)
+                turnRight = ((TileEntityConveyorBase) worldIn.getTileEntity(posRight)).getFacing() == facing.rotateYCCW();
 
 
             // Update relevant conveyors
@@ -147,13 +148,17 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
             tileConveyor.setSlopeUp(slopeUp);
             tileConveyor.setSlopeDown(slopeDown);
             tileConveyor.setTurnLeft(turnLeft);
-            tileConveyor.setTagTurnRight(turnRight);
+            tileConveyor.setTurnRight(turnRight);
+
+            checkForTurnSwitch(worldIn, pos);
         }
     }
 
     public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
     {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+
+        checkForTurnSwitch(worldIn, pos);
 
         if (!worldIn.isRemote)
         {
@@ -191,24 +196,6 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
 
                     double movementY = transportation_speed;
 
-//                    if (facing.getFrontOffsetX() == 1)
-//                    {
-//                        double endX = tileConveyor.getPos().getX() + 1;
-//                        double diff = endX - entity.posX;
-//
-//                        if (diff < 0.15)
-//                            movementY *= 0.9D;
-//                    }
-//
-//                    if (facing.getFrontOffsetZ() == 1)
-//                    {
-//                        double endZ = tileConveyor.getPos().getZ() + 1;
-//                        double diff = endZ - entity.posZ;
-//
-//                        if (diff < 0.15)
-//                            movementY *= 0.9D;
-//                    }
-                    	
 					entity.onGround = false;
 					entity.fallDistance=0;
 					entity.motionY += movementY * 0.7D*factor;
@@ -235,12 +222,53 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
         }
     }
 
+    private void checkForTurnSwitch(World worldIn, BlockPos pos)
+    {
+        TileEntityConveyor tileConveyor = getTileEntity(worldIn, pos);
+
+        EnumFacing enumfacing = tileConveyor.getFacing();
+        boolean flag = shouldTurnBeSwitched(worldIn, pos);
+
+        if (flag && !tileConveyor.isPowered() && (tileConveyor.isTurnLeft() || tileConveyor.isTurnRight()))
+        {
+            if (tileConveyor.isTurnLeft())
+                tileConveyor.setTurnRight(true);
+
+            else
+                tileConveyor.setTurnLeft(true);
+
+            tileConveyor.setFacing(enumfacing.getOpposite());
+            tileConveyor.setPowered(true);
+
+            worldIn.markChunkDirty(pos, tileConveyor);
+        }
+
+        else if (!flag && tileConveyor.isPowered() && (tileConveyor.isTurnLeft() || tileConveyor.isTurnRight()))
+        {
+            if (tileConveyor.isTurnLeft())
+                tileConveyor.setTurnRight(true);
+
+            else
+                tileConveyor.setTurnLeft(true);
+
+            tileConveyor.setFacing(enumfacing.getOpposite());
+            tileConveyor.setPowered(false);
+
+            worldIn.markChunkDirty(pos, tileConveyor);
+        }
+    }
+
+    private boolean shouldTurnBeSwitched(World worldIn, BlockPos pos)
+    {
+        return worldIn.isBlockPowered(pos) || worldIn.isSidePowered(pos, EnumFacing.DOWN);
+    }
+
     @Override
     @Nonnull
     protected BlockStateContainer createBlockState()
     {
         IProperty[] listedProperties = new IProperty[] {  };
-        IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { FACING, SLOPE_UP, SLOPE_DOWN, TURN_LEFT, TURN_RIGHT };
+        IUnlistedProperty[] unlistedProperties = new IUnlistedProperty[] { FACING, SLOPE_UP, SLOPE_DOWN, TURN_LEFT, TURN_RIGHT, POWERED };
 
         return new ExtendedBlockState(this, listedProperties, unlistedProperties);
     }

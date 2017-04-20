@@ -16,11 +16,6 @@ public class TileEntityConveyorDetector extends TileEntityConveyorBase
 
     private int count = 0;
 
-    public TileEntityConveyorDetector()
-    {
-
-    }
-
     public void addFilter(ItemStack stack)
     {
         filter.add(stack.copy());

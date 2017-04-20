@@ -12,11 +12,6 @@ public class TileEntityFilter extends TileEntityICB
     private NonNullList<ItemStack> filterRight = NonNullList.create();
     private NonNullList<ItemStack> filterCenter = NonNullList.create();
 
-    public TileEntityFilter()
-    {
-
-    }
-
     public void addFilter(ItemStack stack, EnumFacing facing)
     {
         if (facing == getFacing().rotateYCCW())
