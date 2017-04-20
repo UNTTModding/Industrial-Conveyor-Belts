@@ -13,6 +13,7 @@ public class Names
 
         public static final String CONVEYOR = "conveyor";
         public static final String CONVEYOR_DETECTOR = "conveyor_detector";
+        public static final String CONVEYOR_DETECTOR_MOB = "conveyor_detector_mob";
 
         public static final String FILTER = "filter";
     }
@@ -21,6 +22,7 @@ public class Names
     {
         public static final String CONVEYOR = "conveyor";
         public static final String CONVEYOR_DETECTOR = "conveyor_detector";
+        public static final String CONVEYOR_DETECTOR_MOB = "conveyor_detector_mob";
 
         public static final String FILTER = "filter";
     }

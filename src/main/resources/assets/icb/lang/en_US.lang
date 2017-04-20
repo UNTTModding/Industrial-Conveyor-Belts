@@ -6,5 +6,6 @@ tile.icb:bridge.name=Bridge
 
 tile.icb:conveyor.name=Conveyor
 tile.icb:conveyor_detector.name=Detector Conveyor
+tile.icb:conveyor_detector_mob.name=Detector Belt (Mob)
 
 tile.icb:filter.name=Filter
