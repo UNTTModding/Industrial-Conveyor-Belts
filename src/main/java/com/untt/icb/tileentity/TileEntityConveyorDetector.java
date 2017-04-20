@@ -3,23 +3,31 @@ package com.untt.icb.tileentity;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.List;
 
+import com.untt.icb.utility.FilterFilter;
+
 public class TileEntityConveyorDetector extends TileEntityConveyorBase
 {
-    private NonNullList<ItemStack> filter = NonNullList.create();
+    private NonNullList<ItemStack> filter;
+    private FilterFilter centerF=new FilterFilter();
 
     private int count = 0;
-
-    public void addFilter(ItemStack stack)
-    {
-        filter.add(stack.copy());
-    }
+    
+    public TileEntityConveyorDetector() {
+    	filter = NonNullList.create();
+    	for (int i = 0; i < 9; i++) {
+    		filter.add(ItemStack.EMPTY);
+		}
+	}
 
     @Override
     public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate)
@@ -35,10 +43,7 @@ public class TileEntityConveyorDetector extends TileEntityConveyorBase
 
         for (EntityItem item : itemList)
         {
-            if (filter.isEmpty())
-                count ++;
-
-            else if (filterContainsItem(item.getEntityItem()))
+            if (filterContainsItem(item.getEntityItem()))
                 count ++;
         }
         
@@ -49,7 +54,8 @@ public class TileEntityConveyorDetector extends TileEntityConveyorBase
 
     private boolean filterContainsItem(ItemStack stack)
     {
-    	return filter.stream().anyMatch(fs->fs.isItemEqual(stack));
+    	boolean match = filter.stream().anyMatch(fs -> centerF.match(fs, stack));
+		return centerF.white^!match;
     }
 
     public int getCount()
@@ -60,5 +66,33 @@ public class TileEntityConveyorDetector extends TileEntityConveyorBase
     public void setCount(int count)
     {
         this.count = count;
+    }
+    
+    public FilterFilter getCenterF() {
+		return centerF;
+	}
+    
+    public NonNullList<ItemStack> getFilter() {
+		return filter;
+	}
+
+	public void handleMessage(EntityPlayer player,NBTTagCompound nbt){
+		centerF.deserializeNBT(nbt.getCompoundTag("c"));
+	}
+
+	@Override
+    public void readFromNBT(NBTTagCompound compound) {
+    	ItemStackHelper.loadAllItems(compound.getCompoundTag("filter"), filter);
+    	centerF.deserializeNBT(compound.getCompoundTag("centerF"));
+    	super.readFromNBT(compound);
+    }
+    
+    @Override
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    	NBTTagCompound center=new NBTTagCompound();
+    	ItemStackHelper.saveAllItems(center,filter);
+    	compound.setTag("filter", center);
+    	compound.setTag("centerF", centerF.serializeNBT());
+    	return super.writeToNBT(compound);
     }
 }

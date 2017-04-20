@@ -13,7 +13,7 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 import com.untt.icb.IndustrialConveyorBelts;
 import com.untt.icb.block.BlockFilter;
-import com.untt.icb.network.MessageButtonFilter;
+import com.untt.icb.network.MessageButton;
 import com.untt.icb.tileentity.TileEntityFilter;
 import com.untt.icb.utility.FilterFilter;
 import com.untt.icb.utility.ResourceHelper;
@@ -36,14 +36,13 @@ public class GuiFilter extends GuiContainer {
 		this.mc.getTextureManager().bindTexture(ResourceHelper.getResource("textures/gui/guifilter.png"));
 		this.drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 		this.mc.getTextureManager().bindTexture(new ResourceLocation("textures/gui/container/generic_54.png"));
-		this.drawTexturedModalRect(guiLeft + 20, guiTop + ySize - 79, 7, 139, 162, 76);
+		this.drawTexturedModalRect(guiLeft + 20, guiTop + ySize - 81, 7, 139, 162, 76);
 		this.drawTexturedModalRect(guiLeft + 7, guiTop + 12, 7, 139, 54, 54);
 		this.drawTexturedModalRect(guiLeft + 74, guiTop + 12, 7, 139, 54, 54);
 		this.drawTexturedModalRect(guiLeft + 140, guiTop + 12, 7, 139, 54, 54);
 		drawRect(guiLeft + 7, guiTop + 12, guiLeft + 7 + 54, guiTop + 12 + 54, 0x44FF0000);
 		drawRect(guiLeft + 74, guiTop + 12, guiLeft + 74 + 54, guiTop + 12 + 54, 0x44FFFF00);
 		drawRect(guiLeft + 140, guiTop + 12, guiLeft + 140 + 54, guiTop + 12 + 54, 0x440000FF);
-		TileEntityFilter tile = ((ContainerFilter) inventorySlots).tile;
 		EnumFacing face = mc.world.getBlockState(tile.getPos()).getValue(BlockFilter.FACING);
 		String left = face.rotateYCCW().getName().toUpperCase();
 		fontRendererObj.drawString(left, guiLeft + 7, guiTop + 3, 0x12);
@@ -116,7 +115,7 @@ public class GuiFilter extends GuiContainer {
 		nbt.setTag("l", tile.getLeftF().serializeNBT());
 		nbt.setTag("c", tile.getCenterF().serializeNBT());
 		nbt.setTag("r", tile.getRightF().serializeNBT());
-		IndustrialConveyorBelts.networkWrapper.sendToServer(new MessageButtonFilter(nbt));
+		IndustrialConveyorBelts.networkWrapper.sendToServer(new MessageButton(nbt));
 	}
 
 	@Override

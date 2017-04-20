@@ -9,7 +9,7 @@ import com.untt.icb.gui.GuiHandler;
 import com.untt.icb.init.ICBBlocks;
 import com.untt.icb.init.ICBRecipes;
 import com.untt.icb.init.ICBTileEntities;
-import com.untt.icb.network.MessageButtonFilter;
+import com.untt.icb.network.MessageButton;
 import com.untt.icb.reference.Reference;
 import com.untt.icb.utility.LogHelper;
 
@@ -33,7 +33,7 @@ public class CommonProxy implements IProxy
         NetworkRegistry.INSTANCE.registerGuiHandler(IndustrialConveyorBelts.instance, new GuiHandler());
 
         IndustrialConveyorBelts.networkWrapper=new SimpleNetworkWrapper(Reference.MOD_ID);
-        IndustrialConveyorBelts.networkWrapper.registerMessage(MessageButtonFilter.class, MessageButtonFilter.class, 0, Side.SERVER);
+        IndustrialConveyorBelts.networkWrapper.registerMessage(MessageButton.class, MessageButton.class, 0, Side.SERVER);
         
         LogHelper.info("CommonProxy: Initialization Complete!");
     }

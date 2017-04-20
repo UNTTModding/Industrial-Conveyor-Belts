@@ -1,6 +1,9 @@
 package com.untt.icb.block;
 
+import com.untt.icb.IndustrialConveyorBelts;
+import com.untt.icb.gui.GuiHandler;
 import com.untt.icb.tileentity.TileEntityConveyorDetector;
+
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
@@ -20,6 +23,7 @@ import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import java.util.Random;
 
 public class BlockConveyorDetector extends BlockConveyorBase implements ITileEntityProvider
@@ -73,17 +77,7 @@ public class BlockConveyorDetector extends BlockConveyorBase implements ITileEnt
     {
         if (!worldIn.isRemote)
         {
-            if ( worldIn.getTileEntity(pos) instanceof TileEntityConveyorDetector)
-            {
-				if (!playerIn.getHeldItem(hand).isEmpty()) {
-					TileEntityConveyorDetector tileDetector = (TileEntityConveyorDetector) worldIn.getTileEntity(pos);
-
-					tileDetector.addFilter(playerIn.getHeldItem(hand));
-
-					playerIn.sendMessage(new TextComponentString("Added Filter Item: " + playerIn.getHeldItem(hand).getDisplayName()));
-				} else {
-				}
-            }
+            playerIn.openGui(IndustrialConveyorBelts.instance, GuiHandler.DETECTOR, worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
 
         return true;
