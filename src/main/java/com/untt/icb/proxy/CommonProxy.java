@@ -1,8 +1,16 @@
 package com.untt.icb.proxy;
 
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
+
+import com.untt.icb.IndustrialConveyorBelts;
+import com.untt.icb.gui.GuiHandler;
 import com.untt.icb.init.ICBBlocks;
 import com.untt.icb.init.ICBRecipes;
 import com.untt.icb.init.ICBTileEntities;
+import com.untt.icb.network.MessageButtonFilter;
+import com.untt.icb.reference.Reference;
 import com.untt.icb.utility.LogHelper;
 
 public class CommonProxy implements IProxy
@@ -21,7 +29,12 @@ public class CommonProxy implements IProxy
         ICBTileEntities.init();
 
         ICBRecipes.init();
+        
+        NetworkRegistry.INSTANCE.registerGuiHandler(IndustrialConveyorBelts.instance, new GuiHandler());
 
+        IndustrialConveyorBelts.networkWrapper=new SimpleNetworkWrapper(Reference.MOD_ID);
+        IndustrialConveyorBelts.networkWrapper.registerMessage(MessageButtonFilter.class, MessageButtonFilter.class, 0, Side.SERVER);
+        
         LogHelper.info("CommonProxy: Initialization Complete!");
     }
 

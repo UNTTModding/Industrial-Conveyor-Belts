@@ -82,13 +82,16 @@ public class BlockConveyorDetector extends BlockConveyorBase implements ITileEnt
     {
         if (!worldIn.isRemote)
         {
-            if (!playerIn.getHeldItem(hand).isEmpty() && worldIn.getTileEntity(pos) instanceof TileEntityConveyorDetector)
+            if ( worldIn.getTileEntity(pos) instanceof TileEntityConveyorDetector)
             {
-                TileEntityConveyorDetector tileDetector = (TileEntityConveyorDetector) worldIn.getTileEntity(pos);
+				if (!playerIn.getHeldItem(hand).isEmpty()) {
+					TileEntityConveyorDetector tileDetector = (TileEntityConveyorDetector) worldIn.getTileEntity(pos);
 
-                tileDetector.addFilter(playerIn.getHeldItem(hand));
+					tileDetector.addFilter(playerIn.getHeldItem(hand));
 
-                playerIn.sendMessage(new TextComponentString("Added FilterItem: " + playerIn.getHeldItem(hand).getDisplayName()));
+					playerIn.sendMessage(new TextComponentString("Added Filter Item: " + playerIn.getHeldItem(hand).getDisplayName()));
+				} else {
+				}
             }
         }
 

@@ -1,5 +1,7 @@
 package com.untt.icb.block;
 
+import com.untt.icb.IndustrialConveyorBelts;
+import com.untt.icb.gui.GuiHandler;
 import com.untt.icb.tileentity.TileEntityFilter;
 
 import net.minecraft.block.ITileEntityProvider;
@@ -82,14 +84,7 @@ public class BlockFilter extends BlockICB implements ITileEntityProvider
     {
         if (!worldIn.isRemote)
         {
-            if (!playerIn.getHeldItem(hand).isEmpty() && worldIn.getTileEntity(pos) instanceof TileEntityFilter)
-            {
-                TileEntityFilter tileSorter = (TileEntityFilter) worldIn.getTileEntity(pos);
-
-                tileSorter.addFilter(playerIn.getHeldItem(hand), facing);
-                
-                playerIn.sendMessage(new TextComponentString("Added FilterItem: " + playerIn.getHeldItem(hand).getDisplayName()));
-            }
+				playerIn.openGui(IndustrialConveyorBelts.instance, GuiHandler.FILTER, worldIn, pos.getX(), pos.getY(), pos.getZ());
         }
 
         return true;
