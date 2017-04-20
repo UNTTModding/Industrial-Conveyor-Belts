@@ -11,10 +11,10 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME,  version = Reference.VERSION)
-public class ImmersiveConveyorBelts
+public class IndustrialConveyorBelts
 {
     @Mod.Instance(Reference.MOD_ID)
-    public static ImmersiveConveyorBelts instance;
+    public static IndustrialConveyorBelts instance;
 
     @SidedProxy(clientSide = Reference.CLIENT_PROXY_CLASS, serverSide = Reference.SERVER_PROXY_CLASS)
     public static IProxy sidedProxy;

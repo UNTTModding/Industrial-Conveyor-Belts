@@ -22,7 +22,7 @@ public class BlockICB extends Block
         this.setUnlocalizedName(name);
         this.setRegistryName(name);
 
-        this.setCreativeTab(CreativeTabsICB.IMMERSIVE_CONVEYOR_BELTS);
+        this.setCreativeTab(CreativeTabsICB.INDUSTRIAL_CONVEYOR_BELTS);
     }
 
     public BlockICB(String name)

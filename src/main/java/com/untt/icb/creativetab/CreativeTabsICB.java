@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class CreativeTabsICB
 {
-    public static final CreativeTabs IMMERSIVE_CONVEYOR_BELTS = new CreativeTabs(Reference.MOD_ID.toLowerCase())
+    public static final CreativeTabs INDUSTRIAL_CONVEYOR_BELTS = new CreativeTabs(Reference.MOD_ID.toLowerCase())
     {
         @Override
         @SideOnly(Side.CLIENT)
