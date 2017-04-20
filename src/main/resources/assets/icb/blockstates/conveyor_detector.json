@@ -3,14 +3,9 @@
     {
         "normal": { "model": "icb:conveyor_detector" },
 
-        "facing=north,powered=false": { "model": "icb:conveyor_detector", "y": 0 },
-        "facing=east,powered=false": { "model": "icb:conveyor_detector", "y": 90 },
-        "facing=south,powered=false": { "model": "icb:conveyor_detector", "y": 180 },
-        "facing=west,powered=false": { "model": "icb:conveyor_detector", "y": 270 },
-
-        "facing=north,powered=true": { "model": "icb:conveyor_detector", "y": 0 },
-        "facing=east,powered=true": { "model": "icb:conveyor_detector", "y": 90 },
-        "facing=south,powered=true": { "model": "icb:conveyor_detector", "y": 180 },
-        "facing=west,powered=true": { "model": "icb:conveyor_detector", "y": 270 }
+        "facing=north": { "model": "icb:conveyor_detector", "y": 0 },
+        "facing=east": { "model": "icb:conveyor_detector", "y": 90 },
+        "facing=south": { "model": "icb:conveyor_detector", "y": 180 },
+        "facing=west": { "model": "icb:conveyor_detector", "y": 270 }
     }
 }

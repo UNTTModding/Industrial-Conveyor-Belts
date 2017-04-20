@@ -2,14 +2,12 @@ package com.untt.icb.block;
 
 import com.untt.icb.tileentity.TileEntityConveyorDetectorMob;
 import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -25,7 +23,6 @@ import java.util.Random;
 public class BlockConveyorDetectorMob extends BlockConveyorBase implements ITileEntityProvider
 {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    public static final PropertyBool POWERED = PropertyBool.create("powered");
 
     private static final AxisAlignedBB BOUNDS = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.15, 1.0);
     private static final AxisAlignedBB COLLISION = new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.125, 1.0);
@@ -34,7 +31,7 @@ public class BlockConveyorDetectorMob extends BlockConveyorBase implements ITile
     {
         super(name);
 
-        this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(POWERED, false));
+        this.setDefaultState(blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
 
     @Override
@@ -67,15 +64,7 @@ public class BlockConveyorDetectorMob extends BlockConveyorBase implements ITile
     @Nonnull
     public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand)
     {
-    	return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing()).withProperty(POWERED, false);
-    }
-
-    @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state)
-    {
-        super.onBlockAdded(worldIn, pos, state);
-
-        updateRedstoneOutput(worldIn, pos, state);
+    	return super.getStateForPlacement(world, pos, facing, hitX, hitY, hitZ, meta, placer, hand).withProperty(FACING, placer.getHorizontalFacing());
     }
 
     @Override
@@ -84,25 +73,7 @@ public class BlockConveyorDetectorMob extends BlockConveyorBase implements ITile
         super.onEntityCollidedWithBlock(worldIn, pos, state, entityIn);
 
         if (!worldIn.isRemote && entityIn instanceof EntityLiving)
-            updateRedstoneOutput(worldIn, pos, state);
-    }
-
-    @Override
-    public boolean canProvidePower(IBlockState state)
-    {
-        return true;
-    }
-
-    @Override
-    public int getWeakPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
-    {
-        return state.getValue(POWERED) ? 15 : 0;
-    }
-
-    @Override
-    public int getStrongPower(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing side)
-    {
-        return side.getFrontOffsetY() == 0 ? getWeakPower(state, world, pos, side) : 0;
+            updateComparatorOutput(worldIn, pos);
     }
 
     @Override
@@ -133,34 +104,17 @@ public class BlockConveyorDetectorMob extends BlockConveyorBase implements ITile
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random rand)
     {
-        if (!world.isRemote && state.getValue(POWERED))
-            updateRedstoneOutput(world, pos, state);
+        if (!world.isRemote)
+            updateComparatorOutput(world, pos);
     }
 
-    private void updateRedstoneOutput(World world, BlockPos pos, IBlockState state)
+    private void updateComparatorOutput(World world, BlockPos pos)
     {
         if (!world.isRemote)
         {
             TileEntityConveyorDetectorMob tileDetector = (TileEntityConveyorDetectorMob) world.getTileEntity(pos);
 
             int count = tileDetector.findMatchingMobs(world);
-            boolean powered = state.getValue(POWERED);
-
-            if (count > 0 && !powered)
-            {
-                world.setBlockState(pos, state.withProperty(POWERED, true), 1 | 2);
-                world.notifyNeighborsOfStateChange(pos, this, false);
-                world.notifyNeighborsOfStateChange(pos.down(), this, false);
-                world.markBlockRangeForRenderUpdate(pos, pos);
-            }
-
-            else if (count == 0 && powered)
-            {
-                world.setBlockState(pos, state.withProperty(POWERED, false), 1 | 2);
-                world.notifyNeighborsOfStateChange(pos, this, false);
-                world.notifyNeighborsOfStateChange(pos.down(), this, false);
-                world.markBlockRangeForRenderUpdate(pos, pos);
-            }
 
             if (count > 0)
                 world.scheduleUpdate(new BlockPos(pos), this, tickRate(world));
@@ -174,24 +128,19 @@ public class BlockConveyorDetectorMob extends BlockConveyorBase implements ITile
     @SuppressWarnings("deprecation")
     public IBlockState getStateFromMeta(int meta)
     {
-        return getDefaultState().withProperty(FACING, EnumFacing.getFront((meta & 3) + 2)).withProperty(POWERED, (meta & 4) > 0);
+        return getDefaultState().withProperty(FACING, EnumFacing.getFront(meta + 2));
     }
 
     @Override
     public int getMetaFromState(IBlockState state)
     {
-        int meta = state.getValue(FACING).getIndex() - 2;
-
-        if (state.getValue(POWERED))
-            meta |= 4;
-
-        return meta;
+        return state.getValue(FACING).getIndex() - 2;
     }
 
     @Override
     @Nonnull
     protected BlockStateContainer createBlockState()
     {
-        return new BlockStateContainer(this, FACING, POWERED);
+        return new BlockStateContainer(this, FACING);
     }
 }
