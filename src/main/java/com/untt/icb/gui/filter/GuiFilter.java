@@ -89,8 +89,7 @@ public class GuiFilter extends GuiContainer {
 		if (button.id >= 3000 && button.id <= 3100)
 			f = tile.getRightF();
 		if (f != null) {
-			String s = String.valueOf(button.id);
-			int lastCipher = Integer.parseInt(s.charAt(s.length() - 1) + "");
+			int lastCipher = button.id % 10;
 			switch (lastCipher) {
 			case 0:
 				f.meta ^= true;

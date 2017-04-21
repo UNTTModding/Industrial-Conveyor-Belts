@@ -2,10 +2,12 @@ package com.untt.icb.tileentity;
 
 import com.untt.icb.block.BlockConveyor;
 import com.untt.icb.reference.Names;
+
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.util.ITickable;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
 import javax.annotation.Nonnull;
@@ -161,4 +163,5 @@ public class TileEntityConveyor extends TileEntityConveyorBase
     {
         getTileData().setBoolean(TAG_POWERED, powered);
     }
+
 }

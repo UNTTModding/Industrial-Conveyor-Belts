@@ -6,17 +6,13 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 
 import com.untt.icb.IndustrialConveyorBelts;
-import com.untt.icb.block.BlockFilter;
-import com.untt.icb.gui.filter.ContainerFilter;
 import com.untt.icb.network.MessageButton;
 import com.untt.icb.tileentity.TileEntityConveyorDetector;
-import com.untt.icb.tileentity.TileEntityFilter;
 import com.untt.icb.utility.FilterFilter;
 import com.untt.icb.utility.ResourceHelper;
 
@@ -59,8 +55,7 @@ public class GuiDetector extends GuiContainer {
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 		FilterFilter f = tile.getCenterF();
-		String s = String.valueOf(button.id);
-		int lastCipher = Integer.parseInt(s.charAt(s.length() - 1) + "");
+		int lastCipher = button.id % 10;
 		switch (lastCipher) {
 		case 0:
 			f.meta ^= true;

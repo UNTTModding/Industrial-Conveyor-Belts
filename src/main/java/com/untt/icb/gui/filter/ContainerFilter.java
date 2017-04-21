@@ -28,17 +28,17 @@ public class ContainerFilter extends Container {
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
-				this.addSlotToContainer(new SlotGhost(tile.getFilterLeft(), j + i * 3, 8 + j * 18, 13 + i * 18,player));
+				this.addSlotToContainer(new SlotGhost(tile.getFilterLeft(), j + i * 3, 8 + j * 18, 13 + i * 18, player));
 			}
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
-				this.addSlotToContainer(new SlotGhost(tile.getFilterCenter(), j + i * 3, 75 + j * 18, 13 + i * 18,player));
+				this.addSlotToContainer(new SlotGhost(tile.getFilterCenter(), j + i * 3, 75 + j * 18, 13 + i * 18, player));
 			}
 		}
 		for (int i = 0; i < 3; ++i) {
 			for (int j = 0; j < 3; ++j) {
-				this.addSlotToContainer(new SlotGhost(tile.getFilterRight(), j + i * 3, 141 + j * 18, 13 + i * 18,player));
+				this.addSlotToContainer(new SlotGhost(tile.getFilterRight(), j + i * 3, 141 + j * 18, 13 + i * 18, player));
 			}
 		}
 	}
@@ -53,7 +53,7 @@ public class ContainerFilter extends Container {
 		ItemStack itemstack = ItemStack.EMPTY;
 		return itemstack;
 	}
-	
+
 	@Override
 	public void onContainerClosed(EntityPlayer playerIn) {
 		super.onContainerClosed(playerIn);

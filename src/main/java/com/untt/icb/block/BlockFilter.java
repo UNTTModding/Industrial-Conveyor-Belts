@@ -95,7 +95,7 @@ public class BlockFilter extends BlockICB implements ITileEntityProvider
     {
         if (!worldIn.isRemote)
         {
-            if (entityIn instanceof EntityItem)
+            if (entityIn instanceof EntityItem&&!entityIn.isDead)
             {
                 EntityItem entityItem = (EntityItem) entityIn;
 
@@ -105,7 +105,7 @@ public class BlockFilter extends BlockICB implements ITileEntityProvider
 
                     tileSorter.sortItemStack(entityItem.getEntityItem());
 
-                    worldIn.removeEntity(entityItem);
+                    entityIn.setDead();
                 }
             }
         }

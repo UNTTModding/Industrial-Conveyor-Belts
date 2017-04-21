@@ -8,7 +8,6 @@ import net.minecraft.util.math.Vec3d;
 
 import com.untt.icb.gui.SlotGhost;
 import com.untt.icb.tileentity.TileEntityConveyorDetector;
-import com.untt.icb.tileentity.TileEntityFilter;
 
 public class ContainerDetector extends Container {
 

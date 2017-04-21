@@ -1,16 +1,16 @@
 package com.untt.icb.gui;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.IGuiHandler;
+
 import com.untt.icb.gui.detector.ContainerDetector;
 import com.untt.icb.gui.detector.GuiDetector;
 import com.untt.icb.gui.filter.ContainerFilter;
 import com.untt.icb.gui.filter.GuiFilter;
 import com.untt.icb.tileentity.TileEntityConveyorDetector;
 import com.untt.icb.tileentity.TileEntityFilter;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiHandler implements IGuiHandler {
 
