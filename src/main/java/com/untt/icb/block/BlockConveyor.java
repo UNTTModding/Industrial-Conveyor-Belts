@@ -143,6 +143,37 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
             if (conveyorBackDown != null && conveyorBackDown.getFacing() == facing)
                 conveyorBackDown.setSlopeUp(true);
 
+            BlockPos posBack = pos.offset(facing.getOpposite());
+            BlockPos posBackRight = pos.offset(facing.getOpposite()).offset(facing.rotateY());
+            BlockPos posBackLeft = pos.offset(facing.getOpposite()).offset(facing.rotateYCCW());
+
+            TileEntityConveyor conveyorBack = null;
+            TileEntityConveyor conveyorBackRight = null;
+            TileEntityConveyor conveyorBackLeft = null;
+
+            if (worldIn.getTileEntity(posBack) != null && worldIn.getTileEntity(posBack) instanceof TileEntityConveyor)
+                conveyorBack = (TileEntityConveyor) worldIn.getTileEntity(posBack);
+
+            if (worldIn.getTileEntity(posBackRight) != null && worldIn.getTileEntity(posBackRight) instanceof TileEntityConveyor)
+                conveyorBackRight = (TileEntityConveyor) worldIn.getTileEntity(posBackRight);
+
+            if (worldIn.getTileEntity(posBackLeft) != null && worldIn.getTileEntity(posBackLeft) instanceof TileEntityConveyor)
+                conveyorBackLeft = (TileEntityConveyor) worldIn.getTileEntity(posBackLeft);
+
+            if ((conveyorBack != null && conveyorBack.getFacing() == tileConveyor.getFacing().rotateY())
+                    && (conveyorBackRight == null || conveyorBackRight.getFacing() != conveyorBack.getFacing()))
+            {
+                conveyorBack.setFacing(conveyorBack.getFacing().rotateYCCW());
+                conveyorBack.setTurnLeft(true);
+            }
+
+            if ((conveyorBack != null && conveyorBack.getFacing() == tileConveyor.getFacing().rotateYCCW())
+                    && (conveyorBackLeft == null || conveyorBackLeft.getFacing() != conveyorBack.getFacing()))
+            {
+                conveyorBack.setFacing(conveyorBack.getFacing().rotateY());
+                conveyorBack.setTurnRight(true);
+            }
+
             // Set state
             tileConveyor.setFacing(facing);
             tileConveyor.setSlopeUp(slopeUp);
@@ -241,6 +272,7 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
             tileConveyor.setPowered(true);
 
             worldIn.markChunkDirty(pos, tileConveyor);
+            worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 1 | 2);
         }
 
         else if (!flag && tileConveyor.isPowered() && (tileConveyor.isTurnLeft() || tileConveyor.isTurnRight()))
@@ -255,6 +287,7 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
             tileConveyor.setPowered(false);
 
             worldIn.markChunkDirty(pos, tileConveyor);
+            worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 1 | 2);
         }
     }
 
