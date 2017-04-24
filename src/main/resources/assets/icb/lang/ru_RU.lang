@@ -1,0 +1,11 @@
+#Creative Tabs
+itemGroup.icb=Industrial Conveyor Belts
+
+#Blocks
+tile.icb:bridge.name=Мост
+
+tile.icb:conveyor.name=Конвейер
+tile.icb:conveyor_detector.name=Конвейер с датчиком (Предмет)
+tile.icb:conveyor_detector_mob.name=Конвейер с датчиком (Существо)
+
+tile.icb:filter.name=Фильтр
