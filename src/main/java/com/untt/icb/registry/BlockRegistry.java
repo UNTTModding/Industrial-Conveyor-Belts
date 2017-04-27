@@ -1,13 +1,14 @@
 package com.untt.icb.registry;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemBlock;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
-import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemBlock;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class BlockRegistry
 {

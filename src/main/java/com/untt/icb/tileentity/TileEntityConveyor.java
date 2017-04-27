@@ -1,16 +1,14 @@
 package com.untt.icb.tileentity;
 
-import com.untt.icb.block.BlockConveyor;
-import com.untt.icb.reference.Names;
+import javax.annotation.Nonnull;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.util.ITickable;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
-import javax.annotation.Nonnull;
+import com.untt.icb.block.BlockConveyor;
 
 public class TileEntityConveyor extends TileEntityConveyorBase
 {
@@ -61,7 +59,8 @@ public class TileEntityConveyor extends TileEntityConveyorBase
         return compound;
     }
 
-    public IExtendedBlockState writeExtendedBlockState(IExtendedBlockState state)
+    @Override
+	public IExtendedBlockState writeExtendedBlockState(IExtendedBlockState state)
     {
         state = super.writeExtendedBlockState(state);
 

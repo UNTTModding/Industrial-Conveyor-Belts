@@ -8,7 +8,6 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-
 import com.untt.icb.gui.detector.ContainerDetector;
 import com.untt.icb.gui.filter.ContainerFilter;
 
@@ -24,8 +23,8 @@ public class MessageButton implements IMessage, IMessageHandler<MessageButton, I
 
 	@Override
 	public IMessage onMessage(MessageButton message, MessageContext ctx) {
-		ctx.getServerHandler().playerEntity.getServerWorld().addScheduledTask(() -> {
-			EntityPlayer player = ctx.getServerHandler().playerEntity;
+		ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
+			EntityPlayer player = ctx.getServerHandler().player;
 			if (player.openContainer instanceof ContainerFilter) {
 				((ContainerFilter) player.openContainer).tile.handleMessage(player, message.nbt);
 			}else if(player.openContainer instanceof ContainerDetector){

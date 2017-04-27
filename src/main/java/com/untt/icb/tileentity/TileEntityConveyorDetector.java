@@ -1,5 +1,7 @@
 package com.untt.icb.tileentity;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
@@ -11,14 +13,12 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.List;
-
-import com.untt.icb.utility.FilterFilter;
+import com.untt.icb.utility.Filter;
 
 public class TileEntityConveyorDetector extends TileEntityConveyorBase
 {
     private NonNullList<ItemStack> filter;
-    private FilterFilter centerF=new FilterFilter();
+    private Filter centerF=new Filter();
 
     private int count = 0;
     
@@ -68,7 +68,7 @@ public class TileEntityConveyorDetector extends TileEntityConveyorBase
         this.count = count;
     }
     
-    public FilterFilter getCenterF() {
+    public Filter getCenterF() {
 		return centerF;
 	}
     

@@ -1,9 +1,14 @@
 package com.untt.icb.init;
 
-import com.untt.icb.block.*;
+import net.minecraft.block.Block;
+
+import com.untt.icb.block.BlockBridge;
+import com.untt.icb.block.BlockConveyor;
+import com.untt.icb.block.BlockConveyorDetector;
+import com.untt.icb.block.BlockConveyorDetectorMob;
+import com.untt.icb.block.BlockFilter;
 import com.untt.icb.reference.Names;
 import com.untt.icb.registry.BlockRegistry;
-import net.minecraft.block.Block;
 
 public class ICBBlocks
 {

@@ -1,16 +1,16 @@
 package com.untt.icb;
 
-import com.untt.icb.proxy.CommonProxy;
-import com.untt.icb.proxy.IProxy;
-import com.untt.icb.reference.Reference;
-import com.untt.icb.utility.LogHelper;
-
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+
+import com.untt.icb.proxy.CommonProxy;
+import com.untt.icb.proxy.IProxy;
+import com.untt.icb.reference.Reference;
+import com.untt.icb.utility.LogHelper;
 
 @Mod(modid = Reference.MOD_ID, name = Reference.MOD_NAME,  version = Reference.VERSION)
 public class IndustrialConveyorBelts

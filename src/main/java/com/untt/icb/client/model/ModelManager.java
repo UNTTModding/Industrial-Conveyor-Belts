@@ -1,6 +1,8 @@
 package com.untt.icb.client.model;
 
-import com.untt.icb.registry.BlockRegistry;
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -8,8 +10,7 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.model.ModelLoader;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.untt.icb.registry.BlockRegistry;
 
 public class ModelManager
 {

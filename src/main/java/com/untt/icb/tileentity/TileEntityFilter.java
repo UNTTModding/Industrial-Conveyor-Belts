@@ -1,7 +1,5 @@
 package com.untt.icb.tileentity;
 
-import com.untt.icb.utility.FilterFilter;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ItemStackHelper;
@@ -11,14 +9,16 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.Vec3d;
 
+import com.untt.icb.utility.Filter;
+
 public class TileEntityFilter extends TileEntityICB
 {
     private NonNullList<ItemStack> filterLeft;
     private NonNullList<ItemStack> filterRight;
     private NonNullList<ItemStack> filterCenter;
-    private FilterFilter leftF=new FilterFilter();
-    private FilterFilter centerF=new FilterFilter();
-    private FilterFilter rightF=new FilterFilter();
+    private Filter leftF=new Filter();
+    private Filter centerF=new Filter();
+    private Filter rightF=new Filter();
 
     public TileEntityFilter()
     {
@@ -65,7 +65,7 @@ public class TileEntityFilter extends TileEntityICB
             return EnumFacing.UP;
     }
 
-    private boolean filterContainsItem(ItemStack stack, NonNullList<ItemStack> filter,FilterFilter f)
+    private boolean filterContainsItem(ItemStack stack, NonNullList<ItemStack> filter,Filter f)
     {
 		boolean match = filter.stream().anyMatch(fs -> f.match(fs, stack));
 		return f.white^!match;
@@ -83,15 +83,15 @@ public class TileEntityFilter extends TileEntityICB
 		return filterCenter;
 	}
 	
-	public FilterFilter getLeftF() {
+	public Filter getLeftF() {
 		return leftF;
 	}
 
-	public FilterFilter getCenterF() {
+	public Filter getCenterF() {
 		return centerF;
 	}
 
-	public FilterFilter getRightF() {
+	public Filter getRightF() {
 		return rightF;
 	}
 

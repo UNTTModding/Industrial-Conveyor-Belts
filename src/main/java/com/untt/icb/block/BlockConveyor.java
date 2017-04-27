@@ -1,8 +1,7 @@
 package com.untt.icb.block;
 
-import com.untt.icb.block.unlistedproperties.UnlistedPropertyBoolean;
-import com.untt.icb.tileentity.TileEntityConveyor;
-import com.untt.icb.tileentity.TileEntityConveyorBase;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -23,8 +22,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.untt.icb.block.unlistedproperties.UnlistedPropertyBoolean;
+import com.untt.icb.tileentity.TileEntityConveyor;
+import com.untt.icb.tileentity.TileEntityConveyorBase;
 
 public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvider
 {
@@ -185,7 +185,8 @@ public class BlockConveyor extends BlockConveyorBase implements ITileEntityProvi
         }
     }
 
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+    @Override
+	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
     {
         super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
 

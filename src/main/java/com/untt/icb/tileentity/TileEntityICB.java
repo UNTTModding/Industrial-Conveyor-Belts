@@ -1,14 +1,15 @@
 package com.untt.icb.tileentity;
 
-import com.untt.icb.reference.Names;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.untt.icb.reference.Names;
 
 public class TileEntityICB extends TileEntity
 {

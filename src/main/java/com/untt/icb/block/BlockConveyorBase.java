@@ -1,8 +1,7 @@
 package com.untt.icb.block;
 
-import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
-import com.untt.icb.tileentity.TileEntityConveyor;
-import com.untt.icb.tileentity.TileEntityConveyorBase;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -16,7 +15,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
@@ -35,8 +33,9 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.untt.icb.block.unlistedproperties.UnlistedPropertyFacing;
+import com.untt.icb.tileentity.TileEntityConveyor;
+import com.untt.icb.tileentity.TileEntityConveyorBase;
 
 public class BlockConveyorBase extends BlockICB implements ITileEntityProvider {
 	public static final UnlistedPropertyFacing FACING = new UnlistedPropertyFacing("facing");
@@ -69,6 +68,7 @@ public class BlockConveyorBase extends BlockICB implements ITileEntityProvider {
 		return worldIn.getBlockState(pos.down()).isFullyOpaque() || worldIn.getBlockState(pos.down()).getBlock() instanceof BlockBridge;
 	}
 
+	@Override
 	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
 		if (!worldIn.isRemote) {
 			if (!this.canPlaceBlockAt(worldIn, pos)) {

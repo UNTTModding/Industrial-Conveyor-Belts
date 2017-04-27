@@ -1,7 +1,8 @@
 package com.untt.icb.utility;
 
-import com.untt.icb.reference.Reference;
 import net.minecraft.util.ResourceLocation;
+
+import com.untt.icb.reference.Reference;
 
 public class ResourceHelper
 {

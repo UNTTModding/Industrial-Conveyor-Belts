@@ -13,7 +13,7 @@ import net.minecraftforge.fml.client.config.GuiButtonExt;
 import com.untt.icb.IndustrialConveyorBelts;
 import com.untt.icb.network.MessageButton;
 import com.untt.icb.tileentity.TileEntityConveyorDetector;
-import com.untt.icb.utility.FilterFilter;
+import com.untt.icb.utility.Filter;
 import com.untt.icb.utility.ResourceHelper;
 
 public class GuiDetector extends GuiContainer {
@@ -54,7 +54,7 @@ public class GuiDetector extends GuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		FilterFilter f = tile.getCenterF();
+		Filter f = tile.getCenterF();
 		int lastCipher = button.id % 10;
 		switch (lastCipher) {
 		case 0:

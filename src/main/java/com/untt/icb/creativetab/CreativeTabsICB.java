@@ -1,11 +1,12 @@
 package com.untt.icb.creativetab;
 
-import com.untt.icb.init.ICBBlocks;
-import com.untt.icb.reference.Reference;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import com.untt.icb.init.ICBBlocks;
+import com.untt.icb.reference.Reference;
 
 public class CreativeTabsICB
 {

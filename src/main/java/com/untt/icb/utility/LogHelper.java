@@ -1,8 +1,10 @@
 package com.untt.icb.utility;
 
-import com.untt.icb.reference.Reference;
 import net.minecraftforge.fml.common.FMLLog;
+
 import org.apache.logging.log4j.Level;
+
+import com.untt.icb.reference.Reference;
 
 public class LogHelper
 {

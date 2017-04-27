@@ -15,7 +15,7 @@ import com.untt.icb.IndustrialConveyorBelts;
 import com.untt.icb.block.BlockFilter;
 import com.untt.icb.network.MessageButton;
 import com.untt.icb.tileentity.TileEntityFilter;
-import com.untt.icb.utility.FilterFilter;
+import com.untt.icb.utility.Filter;
 import com.untt.icb.utility.ResourceHelper;
 
 public class GuiFilter extends GuiContainer {
@@ -45,11 +45,11 @@ public class GuiFilter extends GuiContainer {
 		drawRect(guiLeft + 140, guiTop + 12, guiLeft + 140 + 54, guiTop + 12 + 54, 0x440000FF);
 		EnumFacing face = mc.world.getBlockState(tile.getPos()).getValue(BlockFilter.FACING);
 		String left = face.rotateYCCW().getName().toUpperCase();
-		fontRendererObj.drawString(left, guiLeft + 7, guiTop + 3, 0x12);
+		fontRenderer.drawString(left, guiLeft + 7, guiTop + 3, 0x12);
 		String center = face.getOpposite().getName().toUpperCase();
-		fontRendererObj.drawString(center, guiLeft + 74, guiTop + 3, 0x12);
+		fontRenderer.drawString(center, guiLeft + 74, guiTop + 3, 0x12);
 		String right = face.rotateY().getName().toUpperCase();
-		fontRendererObj.drawString(right, guiLeft + 140, guiTop + 3, 0x12);
+		fontRenderer.drawString(right, guiLeft + 140, guiTop + 3, 0x12);
 
 	}
 
@@ -81,7 +81,7 @@ public class GuiFilter extends GuiContainer {
 	@Override
 	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
-		FilterFilter f = null;
+		Filter f = null;
 		if (button.id >= 1000 && button.id <= 1100)
 			f = tile.getLeftF();
 		if (button.id >= 2000 && button.id <= 2100)

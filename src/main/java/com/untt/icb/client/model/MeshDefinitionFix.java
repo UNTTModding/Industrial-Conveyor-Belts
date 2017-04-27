@@ -16,7 +16,8 @@ interface MeshDefinitionFix extends ItemMeshDefinition
         return lambda;
     }
 
-    default ModelResourceLocation getModelLocation(ItemStack stack)
+    @Override
+	default ModelResourceLocation getModelLocation(ItemStack stack)
     {
         return getLocation(stack);
     }

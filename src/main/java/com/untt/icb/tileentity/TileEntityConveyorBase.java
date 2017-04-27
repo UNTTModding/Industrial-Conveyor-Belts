@@ -1,8 +1,7 @@
 package com.untt.icb.tileentity;
 
-import com.untt.icb.block.BlockConveyor;
-import com.untt.icb.block.BlockConveyorBase;
-import com.untt.icb.reference.Names;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
@@ -18,10 +17,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import com.untt.icb.block.BlockConveyor;
+import com.untt.icb.block.BlockConveyorBase;
+import com.untt.icb.reference.Names;
 
 public class TileEntityConveyorBase extends TileEntityICB implements ITickable
 {
@@ -51,7 +50,7 @@ public class TileEntityConveyorBase extends TileEntityICB implements ITickable
     {
         EnumFacing facing = getFacing();
 
-        state = state.withProperty(BlockConveyor.FACING, facing);
+        state = state.withProperty(BlockConveyorBase.FACING, facing);
 
         return state;
     }

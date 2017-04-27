@@ -1,11 +1,12 @@
 package com.untt.icb.init;
 
+import net.minecraftforge.fml.common.registry.GameRegistry;
+
 import com.untt.icb.reference.Names;
 import com.untt.icb.tileentity.TileEntityConveyor;
 import com.untt.icb.tileentity.TileEntityConveyorDetector;
 import com.untt.icb.tileentity.TileEntityConveyorDetectorMob;
 import com.untt.icb.tileentity.TileEntityFilter;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 
 public class ICBTileEntities
 {
